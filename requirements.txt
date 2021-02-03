@@ -1,0 +1,9 @@
+numpy>=1.16
+qutip>=4.5
+attrs>=20
+colorednoise>=1.1.1
+scipy
+matplotlib
+tqdm
+lmfit
+

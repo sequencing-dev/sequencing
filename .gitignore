@@ -1,0 +1,10 @@
+*.egg-info/*
+*.ipynb-checkpoints*
+__pycache__
+*.vscode
+*-checkpoint.ipynb
+build
+_build
+.coverage
+*make-logo*
+.coverage*
