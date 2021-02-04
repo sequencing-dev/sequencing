@@ -6,10 +6,14 @@ short_description = (
 )
 readme = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.md")
 if os.path.isfile(readme):
-    description = open(readme).read()
+    long_description = open(readme).read()
 else:
-    description = short_description
+    long_description = short_description
 
+# Remove any lines containing links to images
+long_description = "\n".join(
+    [line for line in long_description.splitlines() if "![" not in line]
+)
 
 NAME = "sequencing"
 AUTHOR = "Logan Bishop-Van Horn"
@@ -70,8 +74,10 @@ setup(
     url=URL,
     license=LICENSE,
     packages=find_packages(exclude=["test.*", "test"]),
-    long_description=description,
+    include_package_data=True,
     description=short_description,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     keywords=KEYWORDS,
     classifiers=CLASSIFIERS,
     platforms=PLATFORMS,
