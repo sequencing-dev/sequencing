@@ -33,7 +33,7 @@ INSTALL_REQUIRES = [
 ]
 
 EXTRAS_REQUIRE = {
-    'docs': [
+    "docs": [
         "sphinx",
         "sphinx_rtd_theme",
         "nbsphinx",
