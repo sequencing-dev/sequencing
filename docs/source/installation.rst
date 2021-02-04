@@ -9,7 +9,7 @@ Installation
 
 This section of the documentation describes the recommended method for installing and verifying ``sequencing``.
 
-We strongly recommend creating a new
+We recommend creating a new
 `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
 for ``sequencing``. Here we call the environment ``sequencing-env``, but you may
 call it whatever you like. ``sequencing`` is compatible with Python 3.7, 3.8, and 3.9.
@@ -26,18 +26,18 @@ call it whatever you like. ``sequencing`` is compatible with Python 3.7, 3.8, an
       `QuTip: Installation on MS Windows <http://qutip.org/docs/latest/installation.html#installation-on-ms-windows>`_: 
       The only supported installation configuration is using the Conda environment with Python 3.5+ and Visual Studio 2015.
 
-.. Installing with pip
-.. ===================
+Installing with pip
+===================
 
-.. .. code-block:: bash
+.. code-block:: bash
 
-..     (sequencing-env) pip install sequencing
+    (sequencing-env) pip install sequencing
 
 
 Installing from source
 ======================
 
-You can install ``sequencing`` from
+Alternatively, you can install ``sequencing`` from
 `GitHub <https://github.com/sequencing-dev/sequencing>`_ using the following commands:
 
 .. code-block:: bash

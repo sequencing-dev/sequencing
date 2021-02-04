@@ -58,3 +58,30 @@ Ready to contribute? Follow [GitHub best practices](https://www.asmeurer.com/git
 6. Make your changes and commit them (testing locally).
 7. Push changes to the topic branch on *your* remote once local tests pass and you are happy with the changes you've made.
 8. Create a pull request against the base `main` branch through the Github website.
+
+## Making the Docs
+
+Make an HTML version of the documentation.
+
+> **Note**: This might require installing [Pandoc](https://pandoc.org/installing.html).
+
+```
+pip install sphinx sphinx_rtd_theme nbsphinx
+cd docs
+make html
+```
+
+## Unit Tests
+
+Run all of the unit tests from a Python session using
+
+``` python
+>>> import sequencing.testing as st
+>>> st.run()
+```
+
+Or run them from the command line, using
+
+```
+pytest --cov
+```

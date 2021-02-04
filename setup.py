@@ -7,7 +7,6 @@ composed of many modes and generating complex time-dependent control Hamiltonian
 for [master equation simulations](http://qutip.org/docs/latest/guide/dynamics/dynamics-master.html).
 """
 
-import os
 from setuptools import setup, find_packages
 
 DESCRIPTION = "seQuencing: simulate realistic quantum control sequences using QuTiP"
