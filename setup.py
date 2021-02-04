@@ -32,6 +32,14 @@ INSTALL_REQUIRES = [
     "pytest-cov",
 ]
 
+EXTRAS_REQUIRE = {
+    'docs': [
+        "sphinx",
+        "sphinx_rtd_theme",
+        "nbsphinx",
+    ],
+}
+
 CLASSIFIERS = """\
 Development Status :: 5 - Production/Stable
 Intended Audience :: Science/Research
@@ -69,4 +77,5 @@ setup(
     platforms=PLATFORMS,
     python_requires=PYTHON_VERSION,
     install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
 )
