@@ -1,5 +1,6 @@
 import unittest
 import os
+import tempfile
 
 import numpy as np
 import attr
@@ -71,11 +72,11 @@ class TestSerialization(unittest.TestCase):
         self.assertEqual(car, other_car)
 
     def test_to_from_json_file(self):
-        json_path = "__test_to_from_json_file.json"
-        car = Car("test")
-        car.to_json(json_path=json_path)
-        other_car = Car.from_json(json_path=json_path)
-        os.remove(json_path)
+        with tempfile.TemporaryDirectory() as dirname:
+            json_path = os.path.join(dirname, "__test_to_from_json_file.json")
+            car = Car("test")
+            car.to_json(json_path=json_path)
+            other_car = Car.from_json(json_path=json_path)
         self.assertEqual(car, other_car)
 
 

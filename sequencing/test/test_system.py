@@ -1,5 +1,6 @@
 import unittest
 import os
+import tempfile
 
 import numpy as np
 import qutip
@@ -26,14 +27,15 @@ class TestSerialization(unittest.TestCase):
         self.assertEqual(system, other_system)
 
     def test_to_from_json_file(self):
-        json_path = "__test_to_from_json_file.json"
+
         qubit = Transmon("qubit", levels=3, kerr=-200e-3)
         cavity = Cavity("cavity", levels=10, kerr=-10e-6)
         system = System("system", modes=[qubit, cavity])
         system.set_cross_kerr(qubit, cavity, chi=-2e-3)
-        system.to_json(json_path=json_path)
-        other_system = System.from_json(json_path=json_path)
-        os.remove(json_path)
+        with tempfile.TemporaryDirectory() as dirname:
+            json_path = os.path.join(dirname, "__test_to_from_json_file.json")
+            system.to_json(json_path=json_path)
+            other_system = System.from_json(json_path=json_path)
         self.assertEqual(system, other_system)
 
 
