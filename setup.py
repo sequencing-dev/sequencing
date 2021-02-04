@@ -32,6 +32,26 @@ INSTALL_REQUIRES = [
     "pytest-cov",
 ]
 
+CLASSIFIERS = """\
+Development Status :: 5 - Production/Stable
+Intended Audience :: Science/Research
+License :: OSI Approved :: BSD License
+Operating System :: MacOS
+Operating System :: POSIX
+Operating System :: Unix
+Operating System :: Microsoft :: Windows
+Programming Language :: Python
+Programming Language :: Python :: 3.7
+Programming Language :: Python :: 3.8
+Programming Language :: Python :: 3.9
+Topic :: Scientific/Engineering
+Topic :: Scientific/Engineering :: Physics
+"""
+
+CLASSIFIERS = [line for line in CLASSIFIERS.splitlines() if line]
+PLATFORMS = ["Linux", "Mac OSX", "Unix", "Windows"]
+KEYWORDS = "quantum pulse sequence"
+
 exec(open("sequencing/version.py").read())
 
 setup(
@@ -39,11 +59,14 @@ setup(
     version=__version__,  # noqa: F821
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
+    url=URL,
     license=LICENSE,
     packages=find_packages(exclude=["test.*", "test"]),
     long_description=description,
     description=short_description,
-    include_package_data=True,
+    keywords=KEYWORDS,
+    classifiers=CLASSIFIERS,
+    platforms=PLATFORMS,
     python_requires=PYTHON_VERSION,
     install_requires=INSTALL_REQUIRES,
 )
