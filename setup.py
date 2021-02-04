@@ -1,19 +1,17 @@
+"""# seQuencing
+
+``sequencing`` is a Python package for simulating realistic quantum control sequences using
+[QuTiP](http://qutip.org/docs/latest/index.html). Built for researchers and quantum engineers,
+``sequencing`` provides an intuitive framework for constructing models of quantum systems
+composed of many modes and generating complex time-dependent control Hamiltonians
+for [master equation simulations](http://qutip.org/docs/latest/guide/dynamics/dynamics-master.html).
+"""
+
 import os
 from setuptools import setup, find_packages
 
-short_description = (
-    "seQuencing: simulate realistic quantum control sequences using QuTiP"
-)
-readme = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.md")
-if os.path.isfile(readme):
-    long_description = open(readme).read()
-else:
-    long_description = short_description
-
-# Remove any lines containing links to images
-long_description = "\n".join(
-    [line for line in long_description.splitlines() if "![" not in line]
-)
+DESCRIPTION = "seQuencing: simulate realistic quantum control sequences using QuTiP"
+LONG_DESCRIPTION = __doc__
 
 NAME = "sequencing"
 AUTHOR = "Logan Bishop-Van Horn"
@@ -75,8 +73,8 @@ setup(
     license=LICENSE,
     packages=find_packages(exclude=["test.*", "test"]),
     include_package_data=True,
-    description=short_description,
-    long_description=long_description,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     keywords=KEYWORDS,
     classifiers=CLASSIFIERS,
