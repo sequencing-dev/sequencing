@@ -65,7 +65,7 @@ KEYWORDS = "quantum pulse sequence"
 exec(open("sequencing/version.py").read())
 
 setup(
-    name="sequencing",
+    name=NAME,
     version=__version__,  # noqa: F821
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
