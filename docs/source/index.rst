@@ -17,6 +17,25 @@ Built for researchers and quantum engineers, ``sequencing`` provides an intuitiv
 for constructing models of quantum systems composed of many modes and generating complex time-dependent control Hamiltonians
 for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamics/dynamics-master.html>`_.
 
+.. image:: https://img.shields.io/github/workflow/status/sequencing-dev/sequencing/lint-and-test/main
+   :alt: GitHub Workflow Status (branch)
+
+.. image:: https://readthedocs.org/projects/sequencing/badge/?version=latest
+   :target: https://sequencing.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
+.. image:: https://codecov.io/gh/sequencing-dev/sequencing/branch/main/graph/badge.svg?token=LLABAKBJ0C
+   :target: https://codecov.io/gh/sequencing-dev/sequencing
+    
+.. image:: https://img.shields.io/codefactor/grade/github/sequencing-dev/sequencing
+   :alt: CodeFactor Grade
+
+.. image:: https://img.shields.io/pypi/pyversions/sequencing
+   :alt: PyPI - Python Version
+
+.. image:: https://img.shields.io/github/license/sequencing-dev/sequencing
+   :alt: GitHub
+
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
