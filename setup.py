@@ -71,7 +71,7 @@ setup(
     author_email=AUTHOR_EMAIL,
     url=URL,
     license=LICENSE,
-    packages=find_packages(exclude=["test.*", "test"]),
+    packages=find_packages(),
     include_package_data=True,
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
