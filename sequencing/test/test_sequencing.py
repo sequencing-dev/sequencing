@@ -274,7 +274,6 @@ class TestSequence(unittest.TestCase):
         cls.system = system
 
     def test_sequence(self):
-        import matplotlib.pyplot as plt
 
         system = self.system
         qubit = system.qubit
@@ -291,8 +290,7 @@ class TestSequence(unittest.TestCase):
             # append a unitary
             seq.append(qubit.Rx(theta / 2))
 
-        fig, ax = seq.plot_coefficients()
-        plt.pause(1)
+        _ = seq.plot_coefficients()
         result = seq.run(init_state)
         states = result.states
         fidelity = qutip.fidelity(states[-1], qubit.Rx(np.pi) * init_state) ** 2
