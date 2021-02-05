@@ -48,21 +48,15 @@ Alternatively, you can install ``sequencing`` from
 Verifying the installation
 ==========================
 
-We recommend first verifying the ``qutip`` installation:
-
-.. code-block:: python
-
-    >>> import qutip.testing as qt
-    >>> qt.run()
-
-After this, you can verify the ``sequencing`` installation:
+To verify your installation by running the ``sequencing`` test suite,
+execute the following commands in a Python session:
 
 .. code-block:: python
 
     >>> import sequencing.testing as st
     >>> st.run()
 
-If you prefer, you can run the ``sequencing`` tests in a single line:
+If you prefer, you can also run the ``sequencing`` tests in a single line:
 
 .. code-block:: bash
 

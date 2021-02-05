@@ -10,12 +10,17 @@
 seQuencing
 **********
 
-``sequencing`` is a Python package for simulating realistic quantum control sequences
-using `QuTiP <http://qutip.org/docs/latest/index.html>`_, the Quantum Toolbox in Python.
+`SeQuencing <https://github.com/sequencing-dev/sequencing>`_ is an open-source Python package
+for simulating realistic quantum control sequences using
+`QuTiP <http://qutip.org/docs/latest/index.html>`_, the Quantum Toolbox in Python.
 
 Built for researchers and quantum engineers, ``sequencing`` provides an intuitive framework
 for constructing models of quantum systems composed of many modes and generating complex time-dependent control Hamiltonians
 for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamics/dynamics-master.html>`_.
+
+
+.. image:: https://img.shields.io/pypi/v/sequencing
+   :alt: PyPI
 
 .. image:: https://img.shields.io/github/workflow/status/sequencing-dev/sequencing/lint-and-test/main
    :alt: GitHub Workflow Status (branch)
@@ -30,11 +35,13 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
 .. image:: https://img.shields.io/codefactor/grade/github/sequencing-dev/sequencing
    :alt: CodeFactor Grade
 
-.. image:: https://img.shields.io/pypi/pyversions/sequencing
-   :alt: PyPI - Python Version
+.. .. image:: https://img.shields.io/pypi/pyversions/sequencing
+..    :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/github/license/sequencing-dev/sequencing
    :alt: GitHub
+
+-----------------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
@@ -61,4 +68,6 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
    :caption: About seQuencing
 
    about/license.rst
+   about/authors.rst
    about/contributing.rst
+   about/changelog.rst

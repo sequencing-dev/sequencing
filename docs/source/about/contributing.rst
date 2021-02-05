@@ -1,6 +1,8 @@
 .. figure:: ../images/sequencing-logo.*
    :alt: seQuencing logo
 
+.. _contributing:
+
 ************
 Contributing
 ************
