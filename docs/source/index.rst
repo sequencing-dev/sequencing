@@ -55,13 +55,6 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
    :caption: Learn seQuencing
 
    tutorials/tutorials.rst
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: API Reference
-
-   api/classes.rst
-   api/functions.rst
 
 .. toctree::
    :maxdepth: 2
@@ -71,3 +64,10 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
    about/authors.rst
    about/contributing.rst
    about/changelog.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+
+   api/classes.rst
+   api/functions.rst
