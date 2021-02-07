@@ -36,3 +36,4 @@ intended to demonstrate important features and common idioms of the ``sequencing
    ../notebooks/04*
    ../notebooks/05*
    ../notebooks/06*
+   ../notebooks/07*
