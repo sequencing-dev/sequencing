@@ -37,4 +37,4 @@ If you used `sequencing` for work that was published in a journal article, prepr
 
 **Uploading Examples**
 
-So that others may learn from and reproduce the results of your work, please consider uploading a demonstration of the simulations performed for your publication in the form of Jupyter notebooks or Python files to the [sequencing-examples](https://github.com/sequencing-dev/sequencing-examples) repository.
+So that others may learn from and reproduce the results of your work, please consider uploading a demonstration of the simulations performed for your publication in the form of well-documented Jupyter notebooks or Python files to the [sequencing-examples](https://github.com/sequencing-dev/sequencing-examples) repository.

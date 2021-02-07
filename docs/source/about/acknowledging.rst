@@ -17,4 +17,6 @@ Click the badge above to view ``sequencing`` on the open-access research reposit
 Uploading Examples
 ------------------
 
-So that others may learn from and reproduce the results of your work, please consider uploading a demonstration of the simulations performed for your publication in the form of Jupyter notebooks or Python files to the `sequencing-examples <https://github.com/sequencing-dev/sequencing-examples>`_ repository.
+So that others may learn from and reproduce the results of your work, please consider uploading a demonstration of the simulations performed for your publication in the form of well-documented Jupyter notebooks or Python files to the `sequencing-examples <https://github.com/sequencing-dev/sequencing-examples>`_ repository.
+
+For an example of such a notebook reproducing published results, see the `SNAP gate tutorial <../notebooks/07-snap-gate.ipynb>`_.
