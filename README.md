@@ -6,7 +6,7 @@
 composed of many modes and generating complex time-dependent control Hamiltonians
 for [master equation simulations](http://qutip.org/docs/latest/guide/dynamics/dynamics-master.html).
 
-![PyPI](https://img.shields.io/pypi/v/sequencing) ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/sequencing-dev/sequencing/lint-and-test/main) [![Documentation Status](https://readthedocs.org/projects/sequencing/badge/?version=latest)](https://sequencing.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/sequencing-dev/sequencing/branch/main/graph/badge.svg?token=LLABAKBJ0C)](https://codecov.io/gh/sequencing-dev/sequencing) ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/sequencing-dev/sequencing) ![GitHub](https://img.shields.io/github/license/sequencing-dev/sequencing)
+![PyPI](https://img.shields.io/pypi/v/sequencing) ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/sequencing-dev/sequencing/lint-and-test/main) [![Documentation Status](https://readthedocs.org/projects/sequencing/badge/?version=latest)](https://sequencing.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/sequencing-dev/sequencing/branch/main/graph/badge.svg?token=LLABAKBJ0C)](https://codecov.io/gh/sequencing-dev/sequencing) ![GitHub](https://img.shields.io/github/license/sequencing-dev/sequencing) [![DOI](https://zenodo.org/badge/334427937.svg)](https://zenodo.org/badge/latestdoi/334427937)
 
 ## Documentation
 
@@ -21,10 +21,20 @@ pip install sequencing
 
 For more details, see the [documentation](https://sequencing.readthedocs.io/en/latest/installation.html).
 
+## Authors
+
+Primary author and maintainer: [@loganbvh](https://github.com/loganbvh/).
+
 ## Contributing
 
 Want to contribute to `sequencing`? Check out our [contribution guidelines](CONTRIBUTING.md).
 
-## Authors
+## Acknowledging
 
-Primary author and maintainer: [@loganbvh](https://github.com/loganbvh/).
+If you used `sequencing` for work that was published in a journal article, preprint, blog post, etc., please cite/acknowledge the `sequencing` project using its DOI:
+
+[![DOI](https://zenodo.org/badge/334427937.svg)](https://zenodo.org/badge/latestdoi/334427937)
+
+**Uploading Examples**
+
+So that others may learn from and reproduce the results of your work, please consider uploading a demonstration of the simulations performed for your publication in the form of Jupyter notebooks or Python files to the [sequencing-examples](https://github.com/sequencing-dev/sequencing-examples) repository.

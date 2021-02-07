@@ -31,15 +31,12 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
 
 .. image:: https://codecov.io/gh/sequencing-dev/sequencing/branch/main/graph/badge.svg?token=LLABAKBJ0C
    :target: https://codecov.io/gh/sequencing-dev/sequencing
-    
-.. image:: https://img.shields.io/codefactor/grade/github/sequencing-dev/sequencing
-   :alt: CodeFactor Grade
-
-.. .. image:: https://img.shields.io/pypi/pyversions/sequencing
-..    :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/github/license/sequencing-dev/sequencing
    :alt: GitHub
+
+.. image:: https://zenodo.org/badge/334427937.svg
+   :target: https://zenodo.org/badge/latestdoi/334427937
 
 -----------------------------------------------------------
 
@@ -63,6 +60,7 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
    about/license.rst
    about/authors.rst
    about/contributing.rst
+   about/acknowledging.rst
    about/changelog.rst
 
 .. toctree::
