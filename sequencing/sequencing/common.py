@@ -209,7 +209,7 @@ class DelayChannelsOperation(object):
         self.length = length
 
 
-def get_sequence(system=None, t0=0):
+def get_sequence(system=None):
     """Returns the global PulseSequence.
 
     Args:
@@ -217,7 +217,7 @@ def get_sequence(system=None, t0=0):
             the global PulseSequence is reset. Default: None.
 
     Returns:
-        PulseSequence: The glovbal PulseSequence.
+        PulseSequence: The global PulseSequence.
     """
     from .main import _global_pulse_sequence
 
