@@ -11,7 +11,21 @@ import logging
 import importlib
 from functools import reduce
 from contextlib import contextmanager
+
+import numpy as np
 import attr
+
+
+class NumpyJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super().default(obj)
 
 
 @attr.s
@@ -198,7 +212,7 @@ class Parameterized(object):
         if not json_path.endswith(".json"):
             json_path = json_path + ".json"
         with open(json_path, "w") as f:
-            json.dump(d, f, indent=2, sort_keys=True)
+            json.dump(d, f, indent=2, sort_keys=True, cls=NumpyJSONEncoder)
 
     @classmethod
     def from_dict(cls, d):
