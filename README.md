@@ -21,7 +21,7 @@ pip install sequencing
 
 For more details, see the [documentation](https://sequencing.readthedocs.io/en/latest/installation.html).
 
-## Tutorials:
+## Tutorials
 
 The documentation includes a set of [tutorial notebooks](https://sequencing.readthedocs.io/en/latest/tutorials/tutorials.html). Click the badge below to run the notebooks interactively online using [binder](https://mybinder.org/):
 
