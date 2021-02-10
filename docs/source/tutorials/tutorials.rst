@@ -24,6 +24,11 @@ intended to demonstrate important features and common idioms of the ``sequencing
       - `Using Tensor Products and Partial Traces <http://qutip.org/docs/latest/guide/guide-tensor.html#using-tensor-products-and-partial-traces>`_
       - `Lindblad Master Equation Solver <http://qutip.org/docs/latest/guide/dynamics/dynamics-master.html>`_
 
+Click the badge below to run the tutorial notebooks interactively online using `binder <https://mybinder.org/>`_:
+
+   .. image:: https://mybinder.org/badge_logo.svg
+      :target: https://mybinder.org/v2/gh/sequencing-dev/sequencing/main?filepath=docs%2Fsource%2Fnotebooks
+
 .. toctree::
    :maxdepth: 2
    :caption: Notebooks

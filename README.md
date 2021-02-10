@@ -21,6 +21,12 @@ pip install sequencing
 
 For more details, see the [documentation](https://sequencing.readthedocs.io/en/latest/installation.html).
 
+## Tutorials:
+
+The documentation includes a set of [tutorial notebooks](https://sequencing.readthedocs.io/en/latest/tutorials/tutorials.html). Click the badge below to run the notebooks interactively online using [binder](https://mybinder.org/):
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sequencing-dev/sequencing/main?filepath=docs%2Fsource%2Fnotebooks)
+
 ## Authors
 
 Primary author and maintainer: [@loganbvh](https://github.com/loganbvh/).
