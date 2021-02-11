@@ -285,6 +285,7 @@ def tune_displacement(
     init_state,
     e_ops=None,
     mode_name="cavity",
+    pulse_name=None,
     amp_range=(0.1, 3, 51),
     progbar=True,
     plot=True,
@@ -325,7 +326,8 @@ def tune_displacement(
     """
     init_state = ket2dm(init_state)
     cavity = system.get_mode(mode_name)
-    pulse = cavity.gaussian_pulse
+    pname = pulse_name or cavity.default_pulse
+    pulse = getattr(cavity, pname)
     if e_ops is None:
         e_ops = [init_state]
     e_ops = ops2dms(e_ops)
@@ -373,6 +375,7 @@ def tune_displacement(
             init_state,
             e_ops=e_ops,
             mode_name=mode_name,
+            pulse_name=pulse_name,
             amp_range=amp_range,
             progbar=progbar,
             plot=True,
