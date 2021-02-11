@@ -7,18 +7,14 @@
 Installation
 ************
 
-This section of the documentation describes the recommended method for installing and verifying ``sequencing``.
-
 We recommend creating a new
 `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
-for ``sequencing``. Here we call the environment ``sequencing-env``, but you may
-call it whatever you like. ``sequencing`` is compatible with Python 3.7, 3.8, and 3.9.
+for ``sequencing``. ``sequencing`` is compatible with, and tested on, Python 3.7, 3.8, and 3.9.
 
 .. code-block:: bash
 
-    (base) conda create -n sequencing-env python=<3.7, 3.8, or 3.9>
-    (base) conda activate sequencing-env
-    (sequencing-env)
+    conda create -n <env-name> python=<3.7, 3.8, or 3.9>
+    conda activate <env-name>
 
 .. important::
     
@@ -31,7 +27,7 @@ Installing with pip
 
 .. code-block:: bash
 
-    (sequencing-env) pip install sequencing
+    pip install sequencing
 
 
 Installing from source
@@ -42,8 +38,8 @@ Alternatively, you can install ``sequencing`` from
 
 .. code-block:: bash
 
-    (sequencing-env) git clone https://github.com/sequencing-dev/sequencing.git
-    (sequencing-env) pip install -e .
+    git clone https://github.com/sequencing-dev/sequencing.git
+    pip install -e .
 
 Verifying the installation
 ==========================
@@ -60,4 +56,4 @@ If you prefer, you can also run the ``sequencing`` tests in a single line:
 
 .. code-block:: bash
 
-    (sequencing-env) python -m sequencing.testing
+    python -m sequencing.testing

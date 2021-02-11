@@ -15,11 +15,15 @@ The documentation for `sequencing` is available at:
 
 ## Installation
 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sequencing)
+
 ```
+conda create -n <env-name> python=<3.7, 3.8, or 3.9>
+conda activate <env-name>
 pip install sequencing
 ```
 
-For more details, see the [documentation](https://sequencing.readthedocs.io/en/latest/installation.html).
+`sequencing` requires `python>=3.7` and is tested on `3.7`, `3.8`, and `3.9`. For more details, see the [documentation](https://sequencing.readthedocs.io/en/latest/installation.html).
 
 ## Tutorials
 
