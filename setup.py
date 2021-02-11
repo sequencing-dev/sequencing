@@ -20,7 +20,7 @@ LICENSE = "BSD"
 PYTHON_VERSION = ">=3.7"
 
 INSTALL_REQUIRES = [
-    "qutip>=4.5",
+    "qutip<4.5",
     "numpy>=1.16",
     "colorednoise>=1.1.1",
     "attrs>=20",
