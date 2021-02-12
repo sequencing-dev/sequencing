@@ -43,12 +43,12 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
 Motivation
 ----------
 
-The general problem ``sequencing`` is designed to set up and solve is the time evolution of the state :math:`|\psi(t)\rangle` or density matrix :math:`\rho(t)` of :math:`n` oscillators or "modes", each with its own nonlinearity, dimension, coherence properties, and interactions with other modes, under the influence of realistic time-dependent drives.
+The general problem ``sequencing`` is designed to set up and solve is the time evolution of the state :math:`|\psi(t)\rangle` or density matrix :math:`\rho(t)` of a system composed of :math:`n` oscillators or "modes"---each with its own nonlinearity, dimension, coherence properties, and interactions with other modes---acted upon by realistic time-dependent controls.
 
 The typical time-dependent Hamiltonian constructed using ``sequencing`` has the following form (taking :math:`\hbar=1`):
 
 .. math::
-   \hat{H}(t) &= \sum_{i=1}^n \hat{H}_{\mathrm{mode, }i} + \sum_{i\neq j}\hat{H}_{\mathrm{int, }ij} + \sum_{k}\hat{H}_{\mathrm{drive, }k}(t)\\
+   \hat{H}(t) &= \sum_{i=1}^n \hat{H}_{\mathrm{mode, }i} + \sum_{i\neq j}\hat{H}_{\mathrm{int, }ij} + \sum_{k}\hat{H}_{\mathrm{control, }k}(t)\\
    &= \sum_{i=1}^n \delta_i\hat{a}_i^\dagger\hat{a}_i + \frac{K}{2}(\hat{a}_i^\dagger)^2(\hat{a}_i)^2\\
    &+ \sum_{i\neq j}\chi_{ij}\hat{a}_i^\dagger\hat{a}_i\hat{a}_j^\dagger\hat{a}_j\\
    &+ \sum_{\{\hat{A}_k\}}c_{\hat{A}_k}(t)\hat{A}_k
