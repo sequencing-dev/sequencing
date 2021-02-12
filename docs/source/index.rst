@@ -43,7 +43,7 @@ for `simulations of quantum dynamics <http://qutip.org/docs/latest/guide/dynamic
 Motivation
 ----------
 
-The general problem ``sequencing`` is designed to set up and solve is the time evolution of the state :math:`|\psi(t)\rangle` or density matrix :math:`\rho(t)` of :math:`n` oscillators or "modes", each with its own nonlinearity, dimension, coherence properties, and interactions with other modes.
+The general problem ``sequencing`` is designed to set up and solve is the time evolution of the state :math:`|\psi(t)\rangle` or density matrix :math:`\rho(t)` of :math:`n` oscillators or "modes", each with its own nonlinearity, dimension, coherence properties, and interactions with other modes, under the influence of realistic time-dependent drives.
 
 The typical time-dependent Hamiltonian constructed using ``sequencing`` has the following form (taking :math:`\hbar=1`):
 
