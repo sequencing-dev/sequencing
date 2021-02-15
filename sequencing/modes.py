@@ -676,8 +676,8 @@ class PulseMode(Mode):
 
 
 @attr.s
-class Transmon(PulseMode):
-    """Fixed-frequency transmon.
+class Qubit(PulseMode):
+    """Fixed-frequency qubit.
 
     A PulseMode whose primary operations are rotations on the Bloch Sphere.
 
@@ -698,7 +698,7 @@ class Transmon(PulseMode):
 
     @property
     def anharmonicity(self):
-        """Alias for ``Transmon.kerr``"""
+        """Alias for ``Qubit.kerr``"""
         return self.kerr
 
     @anharmonicity.setter
@@ -707,7 +707,7 @@ class Transmon(PulseMode):
 
     @capture_operation
     def rotate(self, angle, phase, pulse_name=None, **kwargs):
-        """Generate a pulse to rotate the transmon by a given angle
+        """Generate a pulse to rotate the qubit by a given angle
         about a given axis.
 
         Keyword arguments are passed to the ``Pulse`` object.
@@ -736,7 +736,7 @@ class Transmon(PulseMode):
     def rotate_x(self, angle, unitary=False, **kwargs):
         """Generate a rotation about the x axis.
 
-        Keyword arguments are passed to ``Transmon.rotate()`` if
+        Keyword arguments are passed to :meth:`Qubit.rotate()` if
         ``unitary`` is False.
 
         Args:
@@ -758,7 +758,7 @@ class Transmon(PulseMode):
     def rotate_y(self, angle, unitary=False, **kwargs):
         """Generate a rotation about the y axis.
 
-        Keyword arguments are passed to ``Transmon.rotate()`` if
+        Keyword arguments are passed to :meth:`Qubit.rotate()` if
         ``unitary`` is False.
 
         Args:
@@ -776,6 +776,30 @@ class Transmon(PulseMode):
             full_space = kwargs.get("full_space", True)
             return self.Ry(angle, full_space=full_space)
         return self.rotate(-angle, np.pi / 2, **kwargs)
+
+
+@attr.s
+class Transmon(Qubit):
+    """Fixed-frequency transmon qubit.
+
+    A PulseMode whose primary operations are rotations on the Bloch Sphere.
+
+    Args:
+        name (str): Name of the mode for which to construct operators.
+        levels (optional, int): Number of levels in the mode subspace. Default: 2.
+        t1 (optional, float): Mode T1 time in nanoseconds. Default: inf.
+        t2 (optional, float): Mode T2 time in nanoseconds. Default: inf.
+        thermal_population (optional, float): Mode excited state population
+            (in [0..1]). Default: 0.
+        df (optional, float): Mode detuning in GHz. Default: 0.
+        kerr (optional, float): Mode self-Kerr in GHz. Default: 0.
+        pulses (optional, dict[str, Pulse]): Dict of pulses defined for this Mode.
+            Default: empty dict {}.
+        default_pulse (optional, str): Name of the default Pulse for this Mode.
+            Default: "gaussian_pulse".
+    """
+
+    pass
 
 
 @attr.s

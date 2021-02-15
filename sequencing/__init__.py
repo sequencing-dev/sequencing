@@ -21,7 +21,7 @@ For the motivation behind this convention,
 see https://arxiv.org/pdf/1711.02086.pdf.
 """
 
-from .modes import Mode, Transmon, Cavity, sort_modes
+from .modes import Mode, Qubit, Transmon, Cavity, sort_modes
 from .system import System, CouplingTerm
 from .benchmarking import Benchmark
 from .sequencing import (

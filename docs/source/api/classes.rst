@@ -81,6 +81,12 @@ PulseMode
     :members:
     :show-inheritance:
 
+Qubit
+*****
+.. autoclass:: sequencing.modes.Qubit
+    :members:
+    :show-inheritance:
+
 Transmon
 ********
 .. autoclass:: sequencing.modes.Transmon
