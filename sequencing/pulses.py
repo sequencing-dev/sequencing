@@ -113,16 +113,37 @@ def gaussian_chop_norm(sigma, chop):
     return 2 * norm
 
 
-def ring_up_wave(length, reverse=False, shape="tanh"):
+def ring_up_wave(length, reverse=False, shape="tanh", **kwargs):
     if shape == "cos":
         wave = ring_up_cos(length)
     elif shape == "tanh":
         wave = ring_up_tanh(length)
+    elif shape == "gaussian":
+        sigma = kwargs.pop("gaussian_sigma", 6)
+        wave = ring_up_gaussian_flattop(length, sigma, **kwargs)
     else:
-        raise ValueError(f"Shape must be 'cos' or 'tanh', not {shape}.")
+        raise ValueError(f"Shape must be 'cos' or 'tanh', or 'gaussian', not {shape}.")
     if reverse:
         wave = wave[::-1]
     return wave
+
+
+def ring_up_gaussian_flattop(length, sigma, ramp_offset=None):
+    ramp_offset = 0 if ramp_offset is None else ramp_offset
+
+    def _ring_up(ts):
+        if np.abs(ts) < ramp_offset:
+            return 1.0
+        elif ts > ramp_offset:
+            return np.exp(-((ts - ramp_offset) ** 2) / (2.0 * sigma ** 2))
+        else:  # ts < ramp_offset
+            return np.exp(-((ts + ramp_offset) ** 2) / (2.0 * sigma ** 2))
+
+    ts = np.linspace(-length + 1, 0, length)
+    P = np.array([_ring_up(t) for t in ts])
+    # normalize so tail amp = 0 and max amp = 0
+    ofs = P[0]
+    return (P - ofs) / (1 - ofs)
 
 
 def ring_up_cos(length):
@@ -134,13 +155,17 @@ def ring_up_tanh(length):
     return (1 + np.tanh(ts)) / 2
 
 
-def smoothed_constant_wave(length, sigma, shape="tanh"):
+def smoothed_constant_wave(length, sigma, shape="tanh", **kwargs):
     if sigma == 0:
         return np.ones(length)
-    ring_up = ring_up_wave(sigma, shape=shape)
-    constant = np.ones(int(length - 2 * sigma))
-    ring_down = ring_up[::-1]
-    return np.concatenate([ring_up, constant, ring_down])
+
+    return np.concatenate(
+        [
+            ring_up_wave(sigma, shape=shape, **kwargs),
+            np.ones(length - 2 * sigma),
+            ring_up_wave(sigma, reverse=True, shape=shape, **kwargs),
+        ]
+    )
 
 
 def constant_pulse(length=None):
