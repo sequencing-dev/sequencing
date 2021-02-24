@@ -337,7 +337,7 @@ class SmoothedConstantPulse(Pulse):
             Default: 'tanh'.
     """
 
-    VALID_SHAPES = ["tanh", "cos"]
+    VALID_SHAPES = ["tanh", "cos", "gaussian"]
     pulse_func = staticmethod(smoothed_constant_pulse)
     length = NanosecondParameter(100)
     sigma = NanosecondParameter(0)
