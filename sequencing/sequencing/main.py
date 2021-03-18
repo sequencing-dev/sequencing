@@ -154,14 +154,15 @@ class PulseSequence(ValidatedList):
                 Default: False.
 
         Returns:
-            np.ndarray[qutip.Qobj]: Array of Qobjs representing the propagator U(t).
+            list[qutip.Qobj]: List of Qobjs representing the propagator U(t).
         """
+        if all(isinstance(op, SyncOperation) for op in self):
+            return [self.system.I()]
         return self.compile().propagator(
             c_ops=c_ops,
             options=options,
             unitary_mode=unitary_mode,
             parallel=parallel,
-            progress_bar=progress_bar,
         )
 
     def plot_coefficients(self, subplots=True, plot_imag=False, step=False):
@@ -328,6 +329,79 @@ class Sequence(ValidatedList):
             times=times, states=states, expect=expect, num_collapse=num_collapse
         )
         return result
+
+    def propagator(
+        self,
+        c_ops=None,
+        options=None,
+        unitary_mode="batch",
+        parallel=False,
+        progress_bar=False,
+    ):
+        """Calculate the propagator using ``qutip.propagator()``.
+
+        Args:
+            c_ops (list[qutip.Qobj]): List of collapse operators.
+            options (optional, qutip.Options): qutip solver options.
+                Note: defaults to max_step = 1.
+            progress_bar (optional, None): Whether to use qutip's progress bar.
+                Default: None (no progress bar).
+            unitary_mode (optional, "batch" or "single"): Solve all basis vectors
+                simulaneously ("batch") or individually ("single").
+                Default: "batch".
+            parallel (optional, bool): Run the propagator in parallel mode.
+                This will override the  unitary_mode settings if set to True.
+                Default: False.
+            progress_bar (optional, bool): If True, displays a progress bar
+                when iterating through the Sequence. Default:True.
+
+        Returns:
+            list[qutip.Qobj]: List of Qobjs representing the propagator U(t).
+        """
+        self.capture()
+        progbar = tqdm if progress_bar else lambda x, **kw: x
+        c_ops = c_ops or []
+        self._t = 0
+        times = [self._t]
+        props = [self.system.I()]
+        for item in progbar(self):
+            item = self._validate(item)
+            if isinstance(item, PulseSequence):
+                if item.system != self.system:
+                    raise ValueError("All operations must have the same system.")
+                # The CompiledPulseSequence created by PulseSequence.run()
+                # should start at the current Sequence time.
+                item.t0 = self._t
+                seq = item.compile()
+                seq.sync()
+                result = seq.propagator(
+                    c_ops=c_ops,
+                    options=options,
+                    unitary_mode=unitary_mode,
+                    parallel=parallel,
+                )[-1]
+                self._t = seq._t
+                props.append(result * props[-1])
+                times.append(self._t)
+            elif isinstance(item, Operation):
+                seq = CompiledPulseSequence(self.system, t0=self._t)
+                seq.add_operation(item)
+                seq.sync()
+                result = seq.propagator(
+                    c_ops=c_ops,
+                    options=options,
+                    unitary_mode=unitary_mode,
+                    parallel=parallel,
+                )[-1]
+                props.append(result * props[-1])
+                self._t = seq._t
+            else:
+                # item is a Qobj
+                props.append(item * props[-1])
+                # Unitaries take zero time, so self._t
+                # should be the latest sequence time.
+                times.append(times[-1])
+        return props
 
     def plot_coefficients(self, subplots=True, sharex=True, sharey=True):
         """Plot the Hamiltionian coefficients for all channels.

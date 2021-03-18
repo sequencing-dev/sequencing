@@ -148,7 +148,7 @@ class TestPulseSequence(unittest.TestCase):
         self.assertEqual(seq.compile().hc.times.size, 3 * pulse_len)
         prop = seq.propagator()
         result = seq.run(qubit.fock(0))
-        self.assertIsInstance(prop, np.ndarray)
+        self.assertIsInstance(prop, (list, np.ndarray))
         for item in prop:
             self.assertIsInstance(item, qutip.Qobj)
         fid = qutip.fidelity(prop[-1] * qubit.fock(0), result.states[-1]) ** 2
@@ -183,7 +183,7 @@ class TestPulseSequence(unittest.TestCase):
         self.assertEqual(seq.hc.times.size, 3 * pulse_len)
         prop = seq.propagator()
         result = seq.run(qubit.fock(0))
-        self.assertIsInstance(prop, np.ndarray)
+        self.assertIsInstance(prop, (list, np.ndarray))
         for item in prop:
             self.assertIsInstance(item, qutip.Qobj)
         fid = qutip.fidelity(prop[-1] * qubit.fock(0), result.states[-1]) ** 2
@@ -307,9 +307,9 @@ class TestSequence(unittest.TestCase):
         seq = Sequence(system)
         for _ in range(n_rotations):
             # append an Operation
-            seq.append(qubit.rotate_x(theta / 4, capture=False))
+            qubit.rotate_x(theta / 4)
             sync()
-            seq.append(qubit.rotate_x(theta / 4, capture=False))
+            qubit.rotate_x(theta / 4)
             # append a unitary
             seq.append(qubit.Rx(theta / 4))
             seq.append(qubit.Rx(theta / 4))
@@ -317,6 +317,27 @@ class TestSequence(unittest.TestCase):
         states = result.states
         self.assertEqual(len(result.states), result.times.size)
         fidelity = qutip.fidelity(states[-1], qubit.Rx(np.pi) * init_state) ** 2
+        self.assertGreater(fidelity, 0.9995)
+
+    def test_sequence_propagator(self):
+        system = self.system
+        qubit = system.qubit
+        init_state = system.ground_state()
+        n_rotations = 20
+        theta = np.pi / n_rotations
+
+        seq = Sequence(system)
+        for _ in range(n_rotations):
+            # # append an Operation
+            seq.append(qubit.rotate_x(theta / 4, capture=False))
+            sync()
+            seq.append(qubit.rotate_x(theta / 4, capture=False))
+            # append a unitary
+            seq.append(qubit.Rx(theta / 4))
+            seq.append(qubit.Rx(theta / 4))
+        props = seq.propagator()
+        final_state = props[-1] * init_state
+        fidelity = qutip.fidelity(final_state, qubit.Rx(np.pi) * init_state) ** 2
         self.assertGreater(fidelity, 0.9995)
 
 
