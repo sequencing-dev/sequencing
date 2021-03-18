@@ -68,15 +68,13 @@ class HamiltonianChannels(object):
         if H is not None:
             if H != 0 and not isinstance(H, qutip.Qobj):
                 # H could be zero if it's sum([])
-                raise TypeError(
-                    f"Excpected instance of qutip.Qobj, " f"but got {type(H)}."
-                )
+                raise TypeError(f"Excpected instance of qutip.Qobj, but got {type(H)}.")
             self.channels[name] = {"H": H, "time_dependent": time_dependent, "delay": 0}
         elif C_op is not None:
             # C_op could be zero if it's sum([])
             if C_op != 0 and not isinstance(C_op, qutip.Qobj):
                 raise TypeError(
-                    f"Excpected instance of qutip.Qobj, " f"but got {type(C_op)}."
+                    f"Excpected instance of qutip.Qobj, but got {type(C_op)}."
                 )
             self.collapse_channels[name] = {
                 "op": C_op,
@@ -472,6 +470,8 @@ class CompiledPulseSequence(object):
             options = qutip.Options()
             options.max_step = self.hc.dt
             options.store_states = True
+            options.rhs_reuse = True
+            qutip.rhs_clear()
         if "H0" not in self.hc.channels:
             H0 = sum(self.system.H0())
             if isinstance(H0, int) and H0 == 0:
@@ -500,7 +500,6 @@ class CompiledPulseSequence(object):
         options=None,
         unitary_mode="batch",
         parallel=False,
-        progress_bar=None,
     ):
         """Calculate the propagator using ``qutip.propagator()``.
 
@@ -518,13 +517,15 @@ class CompiledPulseSequence(object):
                 Default: False.
 
         Returns:
-            np.ndarray[qutip.Qobj]: Array of Qobjs representing the propagator U(t).
+            list[qutip.Qobj]: List of Qobjs representing the propagator U(t).
         """
         if c_ops is None:
             c_ops = []
         if options is None:
             options = qutip.Options()
             options.max_step = self.hc.dt
+            options.rhs_reuse = True
+            qutip.rhs_clear()
         if "H0" not in self.hc.channels:
             H0 = sum(self.system.H0())
             if isinstance(H0, int) and H0 == 0:
@@ -535,24 +536,25 @@ class CompiledPulseSequence(object):
 
         H, C_ops, times = self.build_hamiltonian()
         c_ops.extend(C_ops)
+        if len(H) == 1 and not isinstance(H[0], list):
+            # This case breaks qutip.propagator().
+            H = H[0]
         props = qutip.propagator(
             H,
             times,
             c_op_list=c_ops,
+            unitary_mode=unitary_mode,
+            parallel=parallel,
             options=options,
-            progress_bar=progress_bar,
         )
-        # It seems that newer versions of numpy automatically coerce
+        # Ensure that props is a list rather than np.ndarray.
+        # This is especially important for numpy >= 1.20
+        # since newer versions of numpy can automatically coerce
         # objects of type np.ndarray[qutip.Qobj] into bare np.ndarray,
         # which is not what we want in this situation.
-        if not all(isinstance(prop, qutip.Qobj) for prop in props):
-            # Prevent numpy from coercing all of the Qobj into ndarray
-            # by first creating an ndarray with dtype object,
-            # then populating it with our Qobj.
+        if isinstance(props, np.ndarray):
             eye = self.system.I()
-            arr = np.ndarray(len(props), dtype=object)
-            arr[:] = [qutip.Qobj(prop, dims=eye.dims) for prop in props]
-            props = arr
+            props = [qutip.Qobj(prop, dims=eye.dims) for prop in props]
         return props
 
     def plot_coefficients(self, subplots=True, plot_imag=False, step=False):
