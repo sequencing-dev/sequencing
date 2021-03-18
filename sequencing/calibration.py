@@ -150,7 +150,7 @@ def tune_rabi(
     if update:
         pulse.amp = new_amp
         print(
-            f"Updating {qubit.name} unit amp from " f"{old_amp:.2e} to {new_amp:.2e}.",
+            f"Updating {qubit.name} unit amp from {old_amp:.2e} to {new_amp:.2e}.",
             flush=True,
         )
     if verify:
@@ -272,7 +272,7 @@ def tune_drag(
     if update:
         pulse.drag = xopt
         print(
-            f"Updating {pulse.name}.drag from " f"{old_drag:.2e} to {xopt:.2e}.",
+            f"Updating {pulse.name}.drag from {old_drag:.2e} to {xopt:.2e}.",
             flush=True,
         )
     else:
@@ -366,7 +366,7 @@ def tune_displacement(
     if update:
         pulse.amp = new_amp
         print(
-            f"Updating {cavity.name} unit amp from " f"{old_amp:.2e} to {new_amp:.2e}.",
+            f"Updating {cavity.name} unit amp from {old_amp:.2e} to {new_amp:.2e}.",
             flush=True,
         )
     if verify:
