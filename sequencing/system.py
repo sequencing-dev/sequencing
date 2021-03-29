@@ -8,6 +8,7 @@
 
 import re
 import json
+from functools import reduce
 from collections import defaultdict
 from contextlib import contextmanager
 
@@ -20,17 +21,17 @@ from .modes import Mode, sort_modes
 
 
 class CouplingTerm(object):
-    """An object representing a coupling between two ``Modes``,
-    given by a Hamiltonian term of the form ``strength * op1 * op2``.
+    """An object representing a coupling between multiple ``Modes``,
+    given by a Hamiltonian term of the form ``strength * product(operators)``.
     If the keyword argument ``add_hc`` is provided and is True,
     then the Hamiltonian term takes the form
-    ``strength * ((op1 * op2) + (op1 * op2).dag())``.
+    ``strength * (product(operators) + product(operators).dag())``.
 
     Args:
-        mode1 (Mode): First mode to be coupled.
-        op1_expr (str): String representation of mode1's operator in the coupling term.
-        mode2 (Mode): Second mode to tbe coupled (can the same object as mode1).
-        op2_expr (str): String representation of mode2's operator in the coupling term.
+        terms (list[tuple[Mode, str]]): List of tuples of `(mode, expr)`,
+            which defines the coupling. Each `expr` is a string containing an
+            algebraic expression involving its operators. See :func:`Mode.operator_expr`
+            for more details. The resulting operators are `mode.operator_expr(expr)`.
         strength (optional, float): Coefficient parameterizing the
             strength of the coupling. Strength should be given in
             units of 2 * pi * GHz. Default: 1.
@@ -38,39 +39,31 @@ class CouplingTerm(object):
             of the product of op1 and op2. Default: False.
     """
 
-    def __init__(self, mode1, op1_expr, mode2, op2_expr, strength=1, add_hc=False):
-        for mode in [mode1, mode2]:
+    def __init__(self, *terms, strength=1, add_hc=False):
+        if len(terms) == 1:
+            # terms = ([(mode_1, expr_1), ..., (mode_n, expr_n)], )
+            # so we want terms[0]
+            if not isinstance(terms[0], (list, tuple)):
+                raise TypeError(
+                    f"Expected a list of (Mode, str), but got {type(terms)}."
+                )
+            terms = terms[0]
+        elif len(terms) == 4:
+            # This is the old two-mode only syntax
+            mode1, op1_expr, mode2, op2_expr = terms
+            terms = [(mode1, op1_expr), (mode2, op2_expr)]
+        for mode, expr in terms:
             if not isinstance(mode, Mode):
                 raise TypeError(f"Expected instance of Mode, but got {type(mode)}.")
-        for expr in [op1_expr, op2_expr]:
             if not isinstance(expr, str):
                 raise TypeError(f"Expected instance of str, but got {type(expr)}.")
-        self.mode1 = mode1
-        self.mode2 = mode2
-        self.op1_expr = op1_expr
-        self.op2_expr = op2_expr
+        self.terms = terms
         self.strength = float(strength)
         self.add_hc = bool(add_hc)
 
     @property
-    def op1(self):
-        """Operator for ``mode1``."""
-        op = self.mode1.operator_expr(self.op1_expr)
-        if not isinstance(op, qutip.Qobj):
-            raise TypeError(f"Expected op1 to be a qutip.Qobj, not {type(op)}")
-        if not self.add_hc and not op.isherm:
-            raise ValueError("Expected op1 to be Hermitian since add_hc is False.")
-        return op
-
-    @property
-    def op2(self):
-        """Operator for ``mode2``."""
-        op = self.mode2.operator_expr(self.op2_expr)
-        if not isinstance(op, qutip.Qobj):
-            raise TypeError(f"Expected op2 to be a qutip.Qobj, not {type(op)}")
-        if not self.add_hc and not op.isherm:
-            raise ValueError("Expected op2 to be Hermitian since add_hc is False.")
-        return op
+    def operators(self):
+        return [mode.operator_expr(expr) for mode, expr in self.terms]
 
     def H(self, strength=None, add_hc=None):
         """Returns the operator representing the coupling term.
@@ -80,7 +73,7 @@ class CouplingTerm(object):
                 strength of the coupling. Strength should be given in units
                 of 2 * pi * GHz. Defaults to self.strength.
             add_hc (optional, bool): Whether to add the Hermitian conjugate
-                of product of op1 and op2. Defaults to self.add_hc.
+                of product of self.operators. Defaults to self.add_hc.
 
         Returns:
             ``qutip.Qobj``: Operator representing the coupling term.
@@ -89,20 +82,19 @@ class CouplingTerm(object):
             strength = self.strength
         if add_hc is None:
             add_hc = self.add_hc
-        op = self.op1 * self.op2
+        op = reduce(lambda a, b: a * b, self.operators)
         if add_hc:
             op = op + op.dag()
         return strength * op
 
     def __repr__(self):
-        return (
-            f"{type(self).__name__}("
-            f"{self.mode1.name}.{self.op1_expr}, "
-            f"{self.mode2.name}.{self.op2_expr}, "
-            f"strength={self.strength:.3e}, "
-            f"add_hc={self.add_hc}"
-            ")"
-        )
+        strings = [
+            f"{type(self).__name__}([",
+            ", ".join([f"({mode.name}, '{expr}')" for mode, expr in self.terms]),
+            f"], strength={self.strength:.3e}",
+            f", add_hc={self.add_hc})",
+        ]
+        return "".join(strings)
 
 
 @attr.s
@@ -348,17 +340,18 @@ class System(Parameterized):
         key = frozenset([mode1.name, mode2.name])
         # Replace this cross-Kerr if it already exists
         if key in self.coupling_terms:
-            for i, term in enumerate(self.coupling_terms[key][:]):
+            for i, coupling_term in enumerate(self.coupling_terms[key][:]):
+                subterms = coupling_term.terms
                 if (
-                    term.mode1 is mode1
-                    and term.op1_expr == "n"
-                    and term.mode2 is mode2
-                    and term.op2_expr == "n"
+                    subterms[0][0] is mode1
+                    and subterms[0][1] == "n"
+                    and subterms[1][0] is mode2
+                    and subterms[1][1] == "n"
                 ) or (
-                    term.mode1 is mode2
-                    and term.op1_expr == "n"
-                    and term.mode2 is mode1
-                    and term.op2_expr == "n"
+                    subterms[0][0] is mode2
+                    and subterms[0][1] == "n"
+                    and subterms[1][0] is mode1
+                    and subterms[1][1] == "n"
                 ):
                     _ = self.coupling_terms[key].pop(i)
         self.coupling_terms[key].append(
