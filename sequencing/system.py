@@ -57,7 +57,7 @@ class CouplingTerm(object):
                 raise TypeError(f"Expected instance of Mode, but got {type(mode)}.")
             if not isinstance(expr, str):
                 raise TypeError(f"Expected instance of str, but got {type(expr)}.")
-        self.terms = terms
+        self.terms = list(terms)
         self.strength = float(strength)
         self.add_hc = bool(add_hc)
 
