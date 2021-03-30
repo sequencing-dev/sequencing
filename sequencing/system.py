@@ -494,7 +494,7 @@ class System(Parameterized):
             d = json.loads(json_str, object_hook=json_decode)
         else:
             if json_path is None:
-                raise ValueError("You must provide either json_path " "or json_str.")
+                raise ValueError("You must provide either json_path or json_str.")
             if not json_path.endswith(".json"):
                 json_path = json_path + ".json"
             with open(json_path, "r") as f:
