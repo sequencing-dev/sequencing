@@ -30,13 +30,14 @@ class CouplingTerm(object):
     Args:
         terms (list[tuple[Mode, str]]): List of tuples of `(mode, expr)`,
             which defines the coupling. Each `expr` is a string containing an
-            algebraic expression involving its operators. See :func:`Mode.operator_expr`
-            for more details. The resulting operators are `mode.operator_expr(expr)`.
+            algebraic expression involving the Mode's operators.
+            See :func:`Mode.operator_expr` for more details.
+            The resulting operators are given by `mode.operator_expr(expr)`.
         strength (optional, float): Coefficient parameterizing the
             strength of the coupling. Strength should be given in
             units of 2 * pi * GHz. Default: 1.
         add_hc (optional, bool): Whether to add the Hermitian conjugate
-            of the product of op1 and op2. Default: False.
+            of the product of the operators. Default: False.
     """
 
     def __init__(self, *terms, strength=1, add_hc=False):
@@ -48,7 +49,9 @@ class CouplingTerm(object):
                     f"Expected a list of (Mode, str), but got {type(terms)}."
                 )
             terms = terms[0]
-        elif len(terms) == 4:
+        elif len(terms) == 4 and all(
+            isinstance(item, Mode) or isinstance(item, str) for item in terms
+        ):
             # This is the old two-mode only syntax
             mode1, op1_expr, mode2, op2_expr = terms
             terms = [(mode1, op1_expr), (mode2, op2_expr)]
@@ -355,7 +358,7 @@ class System(Parameterized):
                 ):
                     _ = self.coupling_terms[key].pop(i)
         self.coupling_terms[key].append(
-            CouplingTerm(mode1, "n", mode2, "n", strength=2 * np.pi * chi)
+            CouplingTerm([(mode1, "n"), (mode2, "n")], strength=2 * np.pi * chi)
         )
         self.cross_kerrs[key] = chi
 
@@ -374,11 +377,11 @@ class System(Parameterized):
         """
         if modes is None:
             modes = self.active_modes
-        mode_names = [mode.name for mode in modes]
+        mode_names = set(mode.name for mode in modes)
         coupling_terms = []
         with self.use_modes(modes):
-            for (mode0, mode1), terms in self.coupling_terms.items():
-                if mode0 in mode_names and mode1 in mode_names:
+            for names, terms in self.coupling_terms.items():
+                if set(names).issubset(mode_names):
                     coupling_terms.extend([term.H() for term in terms])
         if clean:
             return [term for term in coupling_terms if term.data.nnz]
@@ -386,7 +389,7 @@ class System(Parameterized):
 
     def H0(self, modes=None, clean=True):
         """Returns the static Hamiltonian consisting of all
-        self-Kerrs and cross-Kerrs.
+        self-Kerrs and inter-mode couplings.
 
         Args:
             modes (optional, list[Mode]): List of Modes to use in
@@ -480,8 +483,7 @@ class System(Parameterized):
                     # turn '{mode0, mode1}' into frozenset({mode0, mode1})
                     k = key.replace("{", "").replace("}", "").split(", ")
                     new_key = frozenset(k)
-                    obj[new_key] = obj[key]
-                    del obj[key]
+                    obj[new_key] = obj.pop(key)
             return obj
 
         if json_str is not None:
