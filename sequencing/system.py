@@ -49,9 +49,7 @@ class CouplingTerm(object):
                     f"Expected a list of (Mode, str), but got {type(terms)}."
                 )
             terms = terms[0]
-        elif len(terms) == 4 and all(
-            isinstance(item, Mode) or isinstance(item, str) for item in terms
-        ):
+        elif len(terms) == 4 and all(isinstance(item, (Mode, str)) for item in terms):
             # This is the old two-mode only syntax
             mode1, op1_expr, mode2, op2_expr = terms
             terms = [(mode1, op1_expr), (mode2, op2_expr)]
