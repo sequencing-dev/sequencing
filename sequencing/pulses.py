@@ -333,7 +333,7 @@ class SmoothedConstantPulse(Pulse):
             this is equivalent to ControlPulse. The length of the constant
             portion of the pulse is ``length - 2 * sigma``. Default: 0.
         shape (str): String specifying the type of ring-up and ring-down.
-            Calid options are 'tanh' and 'cos' (see ``ringup_wave``).
+            Valid options are 'tanh', 'cos', and 'gaussian' (see ``ringup_wave``).
             Default: 'tanh'.
     """
 
