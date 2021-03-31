@@ -28,11 +28,11 @@ class CouplingTerm(object):
     ``strength * (product(operators) + product(operators).dag())``.
 
     Args:
-        terms (list[tuple[Mode, str]]): List of tuples of `(mode, expr)`,
-            which defines the coupling. Each `expr` is a string containing an
+        terms (list[tuple[Mode, str]]): List of tuples of ``(mode, expr)``,
+            which defines the coupling. Each ``expr`` is a string containing an
             algebraic expression involving the Mode's operators.
             See :func:`Mode.operator_expr` for more details.
-            The resulting operators are given by `mode.operator_expr(expr)`.
+            The resulting operators are given by ``mode.operator_expr(expr)``.
         strength (optional, float): Coefficient parameterizing the
             strength of the coupling. Strength should be given in
             units of 2 * pi * GHz. Default: 1.
