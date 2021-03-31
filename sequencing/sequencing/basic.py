@@ -149,7 +149,7 @@ class HamiltonianChannels(object):
         if times is None:
             if t0 is None or duration is None:
                 raise ValueError(
-                    "You must either specify an array of times " "or t0 and duration."
+                    "You must either specify an array of times or t0 and duration."
                 )
             delay = int(channel_dict[channel_name]["delay"])
             times = np.arange(t0 + delay, t0 + delay + duration, self.dt)
