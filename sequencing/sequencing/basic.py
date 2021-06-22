@@ -175,34 +175,36 @@ class HamiltonianChannels(object):
         rpad = int(max((times.max() - self.tmax) // self.dt, 0))
         self.tmin = min(times.min(), self.tmin)
         self.tmax = max(times.max(), self.tmax)
-        for name, channel in channel_dict.items():
-            if "coeffs" in channel:
-                # This channel already has an operation on it,
-                # so we have to pad it
-                old_coeffs = np.concatenate(
-                    [np.zeros(lpad), channel["coeffs"], np.zeros(rpad)]
-                )
-                new_coeffs = old_coeffs
-                if name == channel_name:
-                    # Sum signals on the same Hamiltonian channel
-                    # if they are not separated by a sync().
-                    new_coeffs = coeffs + old_coeffs
-                channel["coeffs"] = new_coeffs
-            elif name == channel_name:
-                # This is the channel we're currently adding an operation to,
-                # and it doesn't have any operations on it yet
-                channel["coeffs"] = coeffs
-        # check that padding was done properly
-        for name, channel in channel_dict.items():
-            if "coeffs" in channel:
-                if len(self.times) != len(channel["coeffs"]):
-                    msg = (
-                        f"Channel {name}: "
-                        f"Number of time points {len(self.times)} "
-                        f"does not match number of coefficients "
-                        f'{len(channel["coeffs"])}.'
+        for channel_dict in (self.channels, self.collapse_channels):
+            for name, channel in channel_dict.items():
+                if "coeffs" in channel:
+                    # This channel already has an operation on it,
+                    # so we have to pad it
+                    old_coeffs = np.concatenate(
+                        [np.zeros(lpad), channel["coeffs"], np.zeros(rpad)]
                     )
-                    raise ValueError(msg)
+                    new_coeffs = old_coeffs
+                    if name == channel_name:
+                        # Sum signals on the same Hamiltonian channel
+                        # if they are not separated by a sync().
+                        new_coeffs = coeffs + old_coeffs
+                    channel["coeffs"] = new_coeffs
+                elif name == channel_name:
+                    # This is the channel we're currently adding an operation to,
+                    # and it doesn't have any operations on it yet
+                    channel["coeffs"] = coeffs
+        for channel_dict in (self.channels, self.collapse_channels):
+            # check that padding was done properly
+            for name, channel in channel_dict.items():
+                if "coeffs" in channel:
+                    if len(self.times) != len(channel["coeffs"]):
+                        msg = (
+                            f"Channel {name}: "
+                            f"Number of time points {len(self.times)} "
+                            f"does not match number of coefficients "
+                            f'{len(channel["coeffs"])}.'
+                        )
+                        raise ValueError(msg)
 
     def delay_channels(self, channel_names, duration):
         """Add a delay of length ``duration``
@@ -236,8 +238,8 @@ class HamiltonianChannels(object):
             else:
                 H.append(channel["H"])
         C_ops = []
-        for channel in self.collapse_channels.items():
-            if "coeffs" in channel:
+        for channel in self.collapse_channels.values():
+            if "coeffs" in channel and np.any(channel["coeffs"]):
                 C_ops.append([channel["op"], channel["coeffs"]])
             elif isinstance(channel["op"], (list, tuple)):
                 C_ops.extend(channel["op"])

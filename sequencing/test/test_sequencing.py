@@ -5,8 +5,11 @@ from sequencing import (
     Transmon,
     Cavity,
     System,
-    get_sequence,
     Sequence,
+    CTerm,
+    Operation,
+    capture_operation,
+    get_sequence,
     sync,
     delay,
     delay_channels,
@@ -188,6 +191,66 @@ class TestPulseSequence(unittest.TestCase):
             self.assertIsInstance(item, qutip.Qobj)
         fid = qutip.fidelity(prop[-1] * qubit.fock(0), result.states[-1]) ** 2
         self.assertLess(abs(1 - fid), 5e-9)
+
+    def test_dynamic_collapse_operators(self):
+        qubit = Transmon("qubit", levels=2)
+        qubit.t1 = 1000
+        system = System("system", modes=[qubit])
+
+        @capture_operation
+        def lossy_pi_pulse(qubit, pulsed_t1):
+            total_gamma_down = 1 / pulsed_t1
+            additional_gamma_down = total_gamma_down - qubit.Gamma_down
+            coeff = np.sqrt(additional_gamma_down)
+            op = qubit.rotate_x(np.pi, capture=False)
+            terms = op.terms
+            terms[f"{qubit.name}.Gamma_down"] = CTerm(qubit.a, coeffs=coeff)
+            return Operation(op.duration, terms)
+
+        @capture_operation
+        def lossy_delay(qubit, length, pulsed_t1):
+            total_gamma_down = 1 / pulsed_t1
+            additional_gamma_down = total_gamma_down - qubit.Gamma_down
+            coeff = np.sqrt(additional_gamma_down)
+            terms = {f"{qubit.name}.Gamma_down": CTerm(qubit.a, coeffs=coeff)}
+            return Operation(length, terms)
+
+        def t1_sequence(system, qubit, max_time=10000, pulsed_t1=None):
+            seq = get_sequence(system)
+            if pulsed_t1 is not None:
+                lossy_pi_pulse(qubit, pulsed_t1)
+                sync()
+                lossy_delay(qubit, max_time, pulsed_t1)
+            else:
+                qubit.rotate_x(np.pi)
+                sync()
+                delay(max_time)
+            return seq
+
+        def fit_exp_decay(xs, ys):
+            slope, offset = np.polyfit(xs, np.log(ys), 1)
+            amp = np.exp(offset)
+            tau = -1 / slope
+            return amp, tau
+
+        normal_t1_result = t1_sequence(system, qubit).run(
+            qubit.fock(0), e_ops=[qubit.fock(1)]
+        )
+        t0 = qubit.gaussian_pulse.sigma * qubit.gaussian_pulse.chop
+        ts = np.arange(len(normal_t1_result.states))
+        _, normal_fit_t1 = fit_exp_decay(ts[t0:], normal_t1_result.expect[0][t0:])
+        # Assert that t1 is what we expect to within 0.1 ns
+        self.assertTrue(np.isclose(normal_fit_t1, qubit.t1, atol=0.1))
+
+        for factor in [2, 3, 4, 5]:
+            pulsed_t1 = qubit.t1 / factor
+            result = t1_sequence(system, qubit, pulsed_t1=pulsed_t1).run(
+                qubit.fock(0), e_ops=[qubit.fock(1)]
+            )
+            ts = np.arange(len(result.states))
+            _, fit_t1 = fit_exp_decay(ts[t0:], result.expect[0][t0:])
+            # Assert that t1 is what we expect to within 0.1 ns
+            self.assertTrue(np.isclose(fit_t1, pulsed_t1, atol=0.1))
 
 
 class TestTiming(unittest.TestCase):
