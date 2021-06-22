@@ -24,6 +24,7 @@ INSTALL_REQUIRES = [
     "numpy>=1.16",
     "colorednoise>=1.1.1",
     "attrs>=20",
+    "cython>=0.29.20",
     "matplotlib",
     "scipy",
     "jupyter",
