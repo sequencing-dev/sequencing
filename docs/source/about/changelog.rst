@@ -10,6 +10,15 @@ Change Log
 View release history on `PyPI <https://pypi.org/project/sequencing/#history>`_
 or `GitHub <https://github.com/sequencing-dev/sequencing/releases>`_.
 
+Version 1.1.4
+-------------
+
+Release date: 2021-06-22.
+
+**Bug fixes**
+    - Fix a bug that prevented sequences with dynamic collapse operators (``CTerms``) from compiling.
+    - Add a unit test for the above feature.
+  
 Version 1.1.3
 -------------
 
