@@ -706,7 +706,7 @@ class Qubit(PulseMode):
         self.kerr = alpha
 
     @capture_operation
-    def rotate(self, angle, phase, pulse_name=None, **kwargs):
+    def rotate(self, angle, phase, pulse_name=None, unitary=False, **kwargs):
         """Generate a pulse to rotate the qubit by a given angle
         about a given axis.
 
@@ -717,21 +717,30 @@ class Qubit(PulseMode):
             phase (float): Rotation axis relative to the x axis.
             pulse_name (optional, str): Name of the pulse to use. If None,
                 will use ``self.default_pulse``. Default: None.
+            unitary (optional, bool): Whether to return the corresponding
+                unitary operator instead of executing the pulse.
+                Default: False.
 
         Returns:
-            Operation: The resulting ``Operation`` object.
+            ``qutip.Qobj`` or Operation: If ``unitary`` is True, returns
+            the unitary operator Rx(angle), otherwise returns the resulting
+            ``Operation`` object.
         """
-        pulse_name = pulse_name or self.default_pulse
-        pulse = getattr(self, pulse_name)
-        # Assuming that default_pulse.amp = 1 corresponds to rotation of pi
-        norm = gaussian_chop_norm(pulse.sigma, pulse.chop)
-        amp = angle * pulse.amp / norm
-        c_wave = pulse(amp=amp, phase=phase, **kwargs)
-        terms = {
-            f"{self.name}.x": HTerm(self.x, c_wave.real),
-            f"{self.name}.y": HTerm(self.y, c_wave.imag),
-        }
-        return Operation(len(c_wave), terms)
+        if unitary:            
+            full_space = kwargs.get("full_space", True)
+            return self.Raxis(angle, phase, full_space=full_space)
+        else:
+            pulse_name = pulse_name or self.default_pulse
+            pulse = getattr(self, pulse_name)
+            # Assuming that default_pulse.amp = 1 corresponds to rotation of pi
+            norm = gaussian_chop_norm(pulse.sigma, pulse.chop)
+            amp = angle * pulse.amp / norm
+            c_wave = pulse(amp=amp, phase=phase, **kwargs)
+            terms = {
+                f"{self.name}.x": HTerm(self.x, c_wave.real),
+                f"{self.name}.y": HTerm(self.y, c_wave.imag),
+            }
+            return Operation(len(c_wave), terms)
 
     def rotate_x(self, angle, unitary=False, **kwargs):
         """Generate a rotation about the x axis.
