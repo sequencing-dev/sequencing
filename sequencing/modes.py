@@ -784,7 +784,7 @@ class Qubit(PulseMode):
         if unitary:
             full_space = kwargs.get("full_space", True)
             return self.Ry(angle, full_space=full_space)
-        return self.rotate(-angle, np.pi / 2, **kwargs)
+        return self.rotate(angle, np.pi / 2, **kwargs)
 
 
 @attr.s
