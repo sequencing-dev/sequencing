@@ -219,14 +219,7 @@ class TestTwoQubitGates(unittest.TestCase):
         control, target = self.system.modes
 
         cx = gates.CXGate(control=control, target=target)()
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0],])
         self.assertTrue(np.array_equal(cx.full(), ideal))
 
         cx = gates.cx(control, target)
@@ -236,14 +229,7 @@ class TestTwoQubitGates(unittest.TestCase):
         control, target = self.system.modes
 
         cy = gates.CYGate(control=control, target=target)()
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, -1j],
-                [0, 0, 1j, 0],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0],])
         self.assertTrue(np.array_equal(cy.full(), ideal))
 
         cy = gates.cy(control, target)
@@ -253,14 +239,7 @@ class TestTwoQubitGates(unittest.TestCase):
         control, target = self.system.modes
 
         cz = gates.CZGate(control=control, target=target)()
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, -1],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1],])
         self.assertTrue(np.array_equal(cz.full(), ideal))
 
         cz = gates.cz(control, target)
@@ -273,12 +252,7 @@ class TestTwoQubitGates(unittest.TestCase):
 
         cphase = gates.CPhaseGate(control=control, target=target)(phi)
         ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, np.exp(1j * phi)],
-            ]
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, np.exp(1j * phi)],]
         )
         self.assertTrue(np.array_equal(cphase.full(), ideal))
 
@@ -289,14 +263,7 @@ class TestTwoQubitGates(unittest.TestCase):
         q1, q2 = self.system.modes
 
         swap = gates.SWAPGate(q1, q2)()
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1],])
         self.assertTrue(np.array_equal(swap.full(), ideal))
 
         swap = gates.swap(q1, q2)
@@ -308,14 +275,7 @@ class TestTwoQubitGates(unittest.TestCase):
         swapphi = gates.SWAPphiGate(q1, q2)(phi)
         p = -1j * np.exp(1j * phi)
         m = 1j * np.exp(-1j * phi)
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, m, 0],
-                [0, p, 0, 0],
-                [0, 0, 0, 1],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, 0, m, 0], [0, p, 0, 0], [0, 0, 0, 1],])
         self.assertTrue(np.array_equal(swapphi.full(), ideal))
 
         swapphi = gates.swapphi(q1, q2, phi)
@@ -329,14 +289,7 @@ class TestTwoQubitGates(unittest.TestCase):
         q1, q2 = self.system.modes
 
         iswap = gates.iSWAPGate(q1, q2)()
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 1j, 0],
-                [0, 1j, 0, 0],
-                [0, 0, 0, 1],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, 0, 1j, 0], [0, 1j, 0, 0], [0, 0, 0, 1],])
         self.assertTrue(np.array_equal(iswap.full(), ideal))
 
         iswap = gates.iswap(q1, q2)
@@ -347,14 +300,7 @@ class TestTwoQubitGates(unittest.TestCase):
 
         theta_c = -np.pi / 4
         eswap = gates.eSWAPGate(q1, q2)(theta_c, phi=np.pi / 2)
-        swap = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1],
-            ]
-        )
+        swap = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1],])
         ideal = np.cos(theta_c / 2) * np.eye(4) - 1j * np.sin(theta_c / 2) * swap
         self.assertTrue(np.allclose(eswap.full(), ideal))
 
@@ -367,14 +313,7 @@ class TestTwoQubitGates(unittest.TestCase):
         sqrtswap = gates.SqrtSWAPGate(q1, q2)()
         p = (1 + 1j) / 2
         m = (1 - 1j) / 2
-        ideal = np.array(
-            [
-                [1, 0, 0, 0],
-                [0, p, m, 0],
-                [0, m, p, 0],
-                [0, 0, 0, 1],
-            ]
-        )
+        ideal = np.array([[1, 0, 0, 0], [0, p, m, 0], [0, m, p, 0], [0, 0, 0, 1],])
         self.assertTrue(np.allclose(sqrtswap.full(), ideal))
 
         sqrtswap = gates.sqrtswap(q1, q2)

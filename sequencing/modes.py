@@ -726,7 +726,7 @@ class Qubit(PulseMode):
             the unitary operator Rx(angle), otherwise returns the resulting
             ``Operation`` object.
         """
-        if unitary:            
+        if unitary:
             full_space = kwargs.get("full_space", True)
             return self.Raxis(angle, phase, full_space=full_space)
         else:

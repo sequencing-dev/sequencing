@@ -35,11 +35,7 @@ INSTALL_REQUIRES = [
 ]
 
 EXTRAS_REQUIRE = {
-    "docs": [
-        "sphinx",
-        "sphinx_rtd_theme",
-        "nbsphinx",
-    ],
+    "docs": ["sphinx", "sphinx_rtd_theme", "nbsphinx",],
 }
 
 CLASSIFIERS = """\
