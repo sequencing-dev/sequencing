@@ -439,7 +439,12 @@ class CompiledPulseSequence(object):
         return self.hc.build_hamiltonian()
 
     def run(
-        self, init_state, c_ops=None, e_ops=None, options=None, progress_bar=None,
+        self,
+        init_state,
+        c_ops=None,
+        e_ops=None,
+        options=None,
+        progress_bar=None,
     ):
         """Simulate the sequence using qutip.mesolve.
 
@@ -492,7 +497,11 @@ class CompiledPulseSequence(object):
         )
 
     def propagator(
-        self, c_ops=None, options=None, unitary_mode="batch", parallel=False,
+        self,
+        c_ops=None,
+        options=None,
+        unitary_mode="batch",
+        parallel=False,
     ):
         """Calculate the propagator using ``qutip.propagator()``.
 

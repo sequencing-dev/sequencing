@@ -99,7 +99,12 @@ class PulseSequence(ValidatedList):
         return self.compile().channels
 
     def run(
-        self, init_state, c_ops=None, e_ops=None, options=None, progress_bar=None,
+        self,
+        init_state,
+        c_ops=None,
+        e_ops=None,
+        options=None,
+        progress_bar=None,
     ):
         """Simulate the sequence using qutip.mesolve.
 
@@ -154,7 +159,10 @@ class PulseSequence(ValidatedList):
         if all(isinstance(op, SyncOperation) for op in self):
             return [self.system.I()]
         return self.compile().propagator(
-            c_ops=c_ops, options=options, unitary_mode=unitary_mode, parallel=parallel,
+            c_ops=c_ops,
+            options=options,
+            unitary_mode=unitary_mode,
+            parallel=parallel,
         )
 
     def plot_coefficients(self, subplots=True, plot_imag=False, step=False):
