@@ -83,7 +83,7 @@ def array_pulse(
     else:
         i_wave = amp * i_wave + i_noise
         q_wave = amp * q_wave + q_noise
-    c_wave = (i_wave + 1j * q_wave) * np.exp(-1j * phase)
+    c_wave = (i_wave + 1j * q_wave) * np.exp(1j * phase)
     return c_wave
 
 
