@@ -729,18 +729,17 @@ class Qubit(PulseMode):
         if unitary:
             full_space = kwargs.get("full_space", True)
             return self.Raxis(angle, phase, full_space=full_space)
-        else:
-            pulse_name = pulse_name or self.default_pulse
-            pulse = getattr(self, pulse_name)
-            # Assuming that default_pulse.amp = 1 corresponds to rotation of pi
-            norm = gaussian_chop_norm(pulse.sigma, pulse.chop)
-            amp = angle * pulse.amp / norm
-            c_wave = pulse(amp=amp, phase=phase, **kwargs)
-            terms = {
-                f"{self.name}.x": HTerm(self.x, c_wave.real),
-                f"{self.name}.y": HTerm(self.y, c_wave.imag),
-            }
-            return Operation(len(c_wave), terms)
+        pulse_name = pulse_name or self.default_pulse
+        pulse = getattr(self, pulse_name)
+        # Assuming that default_pulse.amp = 1 corresponds to rotation of pi
+        norm = gaussian_chop_norm(pulse.sigma, pulse.chop)
+        amp = angle * pulse.amp / norm
+        c_wave = pulse(amp=amp, phase=phase, **kwargs)
+        terms = {
+            f"{self.name}.x": HTerm(self.x, c_wave.real),
+            f"{self.name}.y": HTerm(self.y, c_wave.imag),
+        }
+        return Operation(len(c_wave), terms)
 
     def rotate_x(self, angle, unitary=False, **kwargs):
         """Generate a rotation about the x axis.
