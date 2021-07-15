@@ -104,7 +104,7 @@ class PulseSequence(ValidatedList):
         c_ops=None,
         e_ops=None,
         options=None,
-        only_final_state=True,
+        only_final_state=False,
         progress_bar=None,
     ):
         """Simulate the sequence using qutip.mesolve.
@@ -119,7 +119,7 @@ class PulseSequence(ValidatedList):
                 Note: defaults to max_step = 1.
             only_final_state (optional, bool): Whether to query the system's state
                 at only the initial and final times rather than at every time step
-                in the Hamiltonian. Default: True.
+                in the Hamiltonian. Default: False.
             progress_bar (optional, None): Whether to use qutip's progress bar.
                 Default: None (no progress bar).
 
