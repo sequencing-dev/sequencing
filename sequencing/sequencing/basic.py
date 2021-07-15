@@ -444,6 +444,7 @@ class CompiledPulseSequence(object):
         c_ops=None,
         e_ops=None,
         options=None,
+        only_final_state=False,
         progress_bar=None,
     ):
         """Simulate the sequence using qutip.mesolve.
@@ -456,8 +457,12 @@ class CompiledPulseSequence(object):
                 Default: None.
             options (optional, qutip.Options): qutip solver options.
                 Note: defaults to max_step = 1.
+            only_final_state (optional, bool): Whether to query the system's state
+                at only the initial and final times rather than at every time step
+                in the Hamiltonian. Default: False.
             progress_bar (optional, None): Whether to use qutip's progress bar.
                 Default: None (no progress bar).
+
 
         Returns:
             ``qutip.solver.Result``: qutip.Solver.Result instance.
@@ -486,10 +491,16 @@ class CompiledPulseSequence(object):
         c_ops.extend(C_ops)
         e_ops = ops2dms(e_ops)
 
+        if only_final_state:
+            mesolve_times = [times.min(), times.max()]
+            H = qutip.QobjEvo(H, tlist=times, state0=init_state, e_ops=e_ops)
+        else:
+            mesolve_times = times
+
         return qutip.mesolve(
             H,
             init_state,
-            times,
+            mesolve_times,
             c_ops,
             e_ops,
             options=options,
@@ -541,6 +552,7 @@ class CompiledPulseSequence(object):
         if len(H) == 1 and not isinstance(H[0], list):
             # This case breaks qutip.propagator().
             H = H[0]
+
         props = qutip.propagator(
             H,
             times,

@@ -104,6 +104,7 @@ class PulseSequence(ValidatedList):
         c_ops=None,
         e_ops=None,
         options=None,
+        only_final_state=True,
         progress_bar=None,
     ):
         """Simulate the sequence using qutip.mesolve.
@@ -116,6 +117,9 @@ class PulseSequence(ValidatedList):
                 Default: None.
             options (optional, qutip.Options): qutip solver options.
                 Note: defaults to max_step = 1.
+            only_final_state (optional, bool): Whether to query the system's state
+                at only the initial and final times rather than at every time step
+                in the Hamiltonian. Default: True.
             progress_bar (optional, None): Whether to use qutip's progress bar.
                 Default: None (no progress bar).
 
@@ -127,6 +131,7 @@ class PulseSequence(ValidatedList):
             c_ops=c_ops,
             e_ops=e_ops,
             options=options,
+            only_final_state=only_final_state,
             progress_bar=progress_bar,
         )
 
@@ -283,7 +288,9 @@ class Sequence(ValidatedList):
                 item.t0 = self._t
                 seq = item.compile()
                 seq.sync()
-                result = seq.run(states[-1], options=options)
+                result = seq.run(
+                    states[-1], options=options, only_final_state=(not full_evolution)
+                )
                 if full_evolution:
                     new_states = result.states
                     new_times = result.times
@@ -295,7 +302,9 @@ class Sequence(ValidatedList):
                 seq = CompiledPulseSequence(self.system, t0=self._t)
                 seq.add_operation(item)
                 seq.sync()
-                result = seq.run(states[-1], options=options)
+                result = seq.run(
+                    states[-1], options=options, only_final_state=(not full_evolution)
+                )
                 if full_evolution:
                     new_states = result.states
                     new_times = result.times
