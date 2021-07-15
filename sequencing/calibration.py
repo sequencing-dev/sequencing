@@ -122,7 +122,7 @@ def tune_rabi(
         seq = get_sequence(system)
         with qubit.pulse_scale(amp, pulse_name=pulse_name):
             qubit.rotate_x(np.pi, pulse_name=pulse_name)
-        result = seq.run(init_state, e_ops=e_ops)
+        result = seq.run(init_state, e_ops=e_ops, only_final_state=False)
         e_pop.append(result.expect[0][-1])
 
     fit_result = fit_sine(amps, e_pop)
@@ -232,14 +232,14 @@ def tune_drag(
         qubit.rotate_x(np.pi, pulse_name=pulse_name)
         sync()
         qubit.rotate_y(np.pi / 2, pulse_name=pulse_name)
-        result = seq.run(init_state, e_ops=e_ops)
+        result = seq.run(init_state, e_ops=e_ops, only_final_state=False)
         XpY9.append(result.expect[0][-1])
 
         seq = get_sequence(system)
         qubit.rotate_y(np.pi, pulse_name=pulse_name)
         sync()
         qubit.rotate_x(np.pi / 2, pulse_name=pulse_name)
-        result = seq.run(init_state, e_ops=e_ops)
+        result = seq.run(init_state, e_ops=e_ops, only_final_state=False)
         YpX9.append(result.expect[0][-1])
 
     r0 = fit_line(drags, XpY9)
@@ -338,7 +338,7 @@ def tune_displacement(
         seq = get_sequence(system)
         with cavity.pulse_scale(amp):
             cavity.displace(1)
-        result = seq.run(init_state, e_ops=e_ops)
+        result = seq.run(init_state, e_ops=e_ops, only_final_state=False)
         zero_pop.append(result.expect[0][-1])
 
     fit_result = fit_displacement(amps, zero_pop)

@@ -234,7 +234,9 @@ class TestPulseSequence(unittest.TestCase):
             return amp, tau
 
         normal_t1_result = t1_sequence(system, qubit).run(
-            qubit.fock(0), e_ops=[qubit.fock(1)]
+            qubit.fock(0),
+            e_ops=[qubit.fock(1)],
+            only_final_state=False,
         )
         t0 = qubit.gaussian_pulse.sigma * qubit.gaussian_pulse.chop
         ts = np.arange(len(normal_t1_result.states))
@@ -245,7 +247,9 @@ class TestPulseSequence(unittest.TestCase):
         for factor in [2, 3, 4, 5]:
             pulsed_t1 = qubit.t1 / factor
             result = t1_sequence(system, qubit, pulsed_t1=pulsed_t1).run(
-                qubit.fock(0), e_ops=[qubit.fock(1)]
+                qubit.fock(0),
+                e_ops=[qubit.fock(1)],
+                only_final_state=False,
             )
             ts = np.arange(len(result.states))
             _, fit_t1 = fit_exp_decay(ts[t0:], result.expect[0][t0:])
