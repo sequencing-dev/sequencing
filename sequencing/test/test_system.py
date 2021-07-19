@@ -86,13 +86,18 @@ class TestSystem(unittest.TestCase):
         chip = 2e-6
         system.set_sixth_order_coupling(cavity, qubit, chip)
         self.assertEqual(len(system.couplings()), 1)
-        self.assertEqual(system.couplings()[0], 2 * np.pi * chip*0.5 * qubit.n * cavity.ad**2 * cavity.a**2)
+        self.assertEqual(
+            system.couplings()[0],
+            2 * np.pi * chip * 0.5 * qubit.n * cavity.ad ** 2 * cavity.a ** 2,
+        )
 
         chip = 3e-6
         system.set_sixth_order_coupling(qubit, cavity, chip)
         self.assertEqual(len(system.couplings()), 2)
-        self.assertEqual(system.couplings()[1], 2 * np.pi * chip*0.5 * cavity.n * qubit.ad**2 * qubit.a**2)
-
+        self.assertEqual(
+            system.couplings()[1],
+            2 * np.pi * chip * 0.5 * cavity.n * qubit.ad ** 2 * qubit.a ** 2,
+        )
 
     def test_coupling_terms(self):
         qubit = Transmon("qubit", levels=3, kerr=-200e-3)

@@ -391,27 +391,24 @@ class System(Parameterized):
                 ):
                     _ = self.coupling_terms[key].pop(i)
         self.coupling_terms[key].append(
-            CouplingTerm(
-                mode1, "ad * ad * a * a", mode2, "n", strength=np.pi * chip
-            )
+            CouplingTerm(mode1, "ad * ad * a * a", mode2, "n", strength=np.pi * chip)
         )
         self.cross_kerrs[key] = chip
 
     def _is_coupling_valid(self, key, mode_names):
         """Checks whether modes in names are valid, e.g. a subset of mode_names.
-            May return False if using a subset of available modes.
+        May return False if using a subset of available modes.
         """
         if set(key).issubset(mode_names):
             return True
-        
+
         # if we have sixth order terms, then we have parse the key
-        elements = [name.split(' ') for name in tuple(key)]
+        elements = [name.split(" ") for name in tuple(key)]
         elements = [item for sublist in elements for item in sublist]
         if set(elements).issubset(mode_names):
             return True
         else:
             return False
-        
 
     def couplings(self, modes=None, clean=True):
         """Returns all of the static coupling terms in the Hamiltonian.
