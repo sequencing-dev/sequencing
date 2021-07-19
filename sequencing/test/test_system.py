@@ -75,6 +75,25 @@ class TestSystem(unittest.TestCase):
         self.assertEqual(len(system.couplings()), 1)
         self.assertEqual(system.couplings()[0], 2 * np.pi * chi * qubit.n * cavity.n)
 
+    def test_set_sixth_order_cross_kerr(self):
+        qubit = Transmon("qubit", levels=3, kerr=-200e-3)
+        cavity = Cavity("cavity", levels=10, kerr=-10e-6)
+        system = System("system", modes=[qubit, cavity])
+
+        with self.assertRaises(ValueError):
+            system.set_sixth_order_coupling(qubit, qubit, -1e-3)
+
+        chip = 2e-6
+        system.set_sixth_order_coupling(cavity, qubit, chip)
+        self.assertEqual(len(system.couplings()), 1)
+        self.assertEqual(system.couplings()[0], 2 * np.pi * chip*0.5 * qubit.n * cavity.ad**2 * cavity.a**2)
+
+        chip = 3e-6
+        system.set_sixth_order_coupling(qubit, cavity, chip)
+        self.assertEqual(len(system.couplings()), 2)
+        self.assertEqual(system.couplings()[1], 2 * np.pi * chip*0.5 * cavity.n * qubit.ad**2 * qubit.a**2)
+
+
     def test_coupling_terms(self):
         qubit = Transmon("qubit", levels=3, kerr=-200e-3)
         cavity = Cavity("cavity", levels=10, kerr=-10e-6)

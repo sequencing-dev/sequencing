@@ -360,6 +360,59 @@ class System(Parameterized):
         )
         self.cross_kerrs[key] = chi
 
+    def set_sixth_order_coupling(self, mode1, mode2, chip=0):
+        """Set the 6th order nonlinearity term (in GHz) between two modes. Note that
+            order matters: we define the coupling term to be (mode1 = a; mode 2 = b):
+            chip * ad**2 * a**2 * bd * b
+
+        Args:
+            mode1 (Mode or str): Instance of Mode or
+                the name of a member of ``self.modes``.
+            mode2 (Mode or str): Instance of Mode or
+                the name of a member of ``self.modes``.
+            chi (optional, float): Cross-Kerr between mode0 and mode1 in GHz.
+                Default: 0.
+        """
+        if isinstance(mode1, str):
+            mode1 = self.get_mode(mode1)
+        if isinstance(mode2, str):
+            mode2 = self.get_mode(mode2)
+        if mode1 is mode2:
+            raise ValueError("If mode1 is mode2, then it's not a cross-Kerr.")
+        key = frozenset(["%s %s" % (mode1.name, mode1.name), mode2.name])
+        # Replace this cross-Kerr if it already exists
+        if key in self.coupling_terms:
+            for i, term in enumerate(self.coupling_terms[key][:]):
+                if (
+                    term.mode1 is mode1
+                    and term.op1_expr == "ad * ad * a * a"
+                    and term.mode2 is mode2
+                    and term.op2_expr == "n"
+                ):
+                    _ = self.coupling_terms[key].pop(i)
+        self.coupling_terms[key].append(
+            CouplingTerm(
+                mode1, "ad * ad * a * a", mode2, "n", strength=np.pi * chip
+            )
+        )
+        self.cross_kerrs[key] = chip
+
+    def _is_coupling_valid(self, key, mode_names):
+        """Checks whether modes in names are valid, e.g. a subset of mode_names.
+            May return False if using a subset of available modes.
+        """
+        if set(key).issubset(mode_names):
+            return True
+        
+        # if we have sixth order terms, then we have parse the key
+        elements = [name.split(' ') for name in tuple(key)]
+        elements = [item for sublist in elements for item in sublist]
+        if set(elements).issubset(mode_names):
+            return True
+        else:
+            return False
+        
+
     def couplings(self, modes=None, clean=True):
         """Returns all of the static coupling terms in the Hamiltonian.
 
@@ -379,7 +432,9 @@ class System(Parameterized):
         coupling_terms = []
         with self.use_modes(modes):
             for names, terms in self.coupling_terms.items():
-                if set(names).issubset(mode_names):
+                # print (names, set(names).issubset(mode_names))
+                # if set(names).issubset(mode_names):
+                if self._is_coupling_valid(names, mode_names):
                     coupling_terms.extend([term.H() for term in terms])
         if clean:
             return [term for term in coupling_terms if term.data.nnz]
