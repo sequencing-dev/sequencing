@@ -121,15 +121,19 @@ def ring_up_wave(length, reverse=False, shape="tanh", **kwargs):
     elif shape == "gaussian":
         sigma = kwargs.pop("gaussian_sigma", 6)
         wave = ring_up_gaussian_flattop(length, sigma, **kwargs)
+    elif shape == "gaussian_flattop":
+        sigma = kwargs.pop("sigma", 6)
+        wave = ring_up_gaussian_flattop(length, sigma, **kwargs)
     else:
-        raise ValueError(f"Shape must be 'cos' or 'tanh', or 'gaussian', not {shape}.")
+        raise ValueError(f"Shape must be 'cos' or 'tanh', or 'gaussian', or 'gaussian_flattop' not {shape}.")
     if reverse:
         wave = wave[::-1]
     return wave
 
 
-def ring_up_gaussian_flattop(length, sigma, ramp_offset=None):
+def ring_up_gaussian_flattop(length, sigma=None, ramp_offset=None):
     ramp_offset = 0 if ramp_offset is None else ramp_offset
+    sigma = 0 if sigma is None else sigma
 
     def _ring_up(ts):
         if np.abs(ts) < ramp_offset:
@@ -155,18 +159,48 @@ def ring_up_tanh(length):
     return (1 + np.tanh(ts)) / 2
 
 
-def smoothed_constant_wave(length, sigma, shape="tanh", **kwargs):
-    if sigma == 0:
+def smoothed_constant_wave(length, ramp_length, shape="tanh", **kwargs):
+    if ramp_length == 0:
         return np.ones(length)
 
     return np.concatenate(
         [
-            ring_up_wave(sigma, shape=shape, **kwargs),
-            np.ones(length - 2 * sigma),
-            ring_up_wave(sigma, reverse=True, shape=shape, **kwargs),
+            ring_up_wave(ramp_length, shape=shape, **kwargs),
+            np.ones(length - 2 * ramp_length),
+            ring_up_wave(ramp_length, reverse=True, shape=shape, **kwargs),
         ]
     )
 
+def gaussian_flattop_wave(length, chop, sigma, ramp_offset):
+    """Generate a Gaussian flattop pulse.
+        - length is the duration of the flattop, can be defined as float
+        - sigma
+        - chop is the number of sigma for the ramps
+    """
+    ramp_offset = 0
+    sigma = 0 if sigma is None else sigma
+
+    def _ring_up(ts):
+        if np.abs(ts) < ramp_offset:
+            return 1.0
+        elif ts > ramp_offset:
+            return np.exp(-((ts - ramp_offset) ** 2) / (2.0 * sigma ** 2))
+        else:  # ts < ramp_offset
+            return np.exp(-((ts + ramp_offset) ** 2) / (2.0 * sigma ** 2))
+
+    ts = np.linspace(-length + 1, 0, length)
+    P = np.array([_ring_up(t) for t in ts])
+    # normalize so tail amp = 0 and max amp = 0
+    ofs = P[0]
+    ring_up_wave = (P - ofs) / (1 - ofs)
+
+    return np.concatenate(
+        [
+            ring_up_wave,
+            np.ones(length - 2 * ramp_length),
+            ring_up_wave[::-1],
+        ]
+    )
 
 def constant_pulse(length=None):
     i_wave, q_wave = np.ones(length), np.zeros(length)
