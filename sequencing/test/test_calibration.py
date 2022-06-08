@@ -41,7 +41,7 @@ class TestDrag(unittest.TestCase):
         qubit = Transmon("qubit", levels=3, kerr=-200e-3)
         qubit.gaussian_pulse.sigma = 10
         system = System("system", modes=[qubit])
-        for _ in range(3):
+        for _ in range(5):
             _, old_amp, new_amp = tune_rabi(
                 system, qubit.fock(0), plot=False, verify=False
             )

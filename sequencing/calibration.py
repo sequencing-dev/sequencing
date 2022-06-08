@@ -29,15 +29,14 @@ def fit_sine(xs, ys):
     fft = np.fft.rfft(ys - ys.mean(), num_pts)
     ix = np.argmax(np.abs(fft))
     f0 = fs[ix]
-    phi0 = 2 * np.pi * f0 * xs[0]
-    phi = np.angle(fft[ix]) - phi0
-    phi = np.angle(np.exp(1j * phi))
+    phi = np.angle(fft[ix])
+    phi = np.mod(phi, 2 * np.pi)
 
     model = lmfit.Model(sine)
     model.set_param_hint("f0", value=f0, min=fs.min(), max=2 * fs.max())
     model.set_param_hint("ofs", value=ys.mean(), min=ys.min(), max=ys.max())
     model.set_param_hint("amp", value=np.ptp(ys) / 2, min=0, max=np.ptp(ys))
-    model.set_param_hint("phi", value=phi, min=-2 * np.pi, max=2 * np.pi)
+    model.set_param_hint("phi", value=phi, min=0, max=2 * np.pi)
     return model.fit(ys, xs=xs)
 
 
