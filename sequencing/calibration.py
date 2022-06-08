@@ -31,10 +31,10 @@ def fit_sine(xs, ys):
     f0 = fs[ix]
     phi0 = 2 * np.pi * f0 * xs[0]
     phi = np.angle(fft[ix]) - phi0
-    phi = np.angle(np.exp(1j*phi)) 
+    phi = np.angle(np.exp(1j * phi))
 
     model = lmfit.Model(sine)
-    model.set_param_hint("f0", value=f0, min=fs.min(), max=2*fs.max())
+    model.set_param_hint("f0", value=f0, min=fs.min(), max=2 * fs.max())
     model.set_param_hint("ofs", value=ys.mean(), min=ys.min(), max=ys.max())
     model.set_param_hint("amp", value=np.ptp(ys) / 2, min=0, max=np.ptp(ys))
     model.set_param_hint("phi", value=phi, min=-2 * np.pi, max=2 * np.pi)
@@ -44,8 +44,8 @@ def fit_sine(xs, ys):
 def fit_displacement(xs, ys):
     def displacement(xs, xscale=1.0, amp=1, ofs=0, n=0):
         alphas = xs * xscale
-        nbars = alphas ** 2
-        return ofs + amp * nbars ** n / factorial(int(n)) * np.exp(-nbars)
+        nbars = alphas**2
+        return ofs + amp * nbars**n / factorial(int(n)) * np.exp(-nbars)
 
     if xs[-1] > xs[0]:
         amp = ys[0] - ys[-1]
@@ -195,7 +195,7 @@ def tune_repeated_pi_pulses(
         mode_name (optional, str): Name of the Transmon mode. Default: 'qubit'.
         pulse_name (optional, str): Name of the pulse to tune. If None,
             will use transmon.default_pulse. Default: None.
-        max_num_pulses (optional, tuple[float, float, int]): Maximum number of 
+        max_num_pulses (optional, tuple[float, float, int]): Maximum number of
             repeated pulses, Default: 100.
         progbar (optional, bool): Whether to display a tqdm progress bar.
             Default: True.
@@ -220,7 +220,7 @@ def tune_repeated_pi_pulses(
         e_ops = [init_state]
     e_ops = ops2dms(e_ops)
     e_pop = []
-    num_pulses = np.arange(max_num_pulses+1)
+    num_pulses = np.arange(max_num_pulses + 1)
     current_state = init_state
     prog = tqdm if progbar else lambda x, **kwargs: x
     for _ in prog(num_pulses):
@@ -302,7 +302,7 @@ def tune_repeated_pio2_pulses(
         mode_name (optional, str): Name of the Transmon mode. Default: 'qubit'.
         pulse_name (optional, str): Name of the pulse to tune. If None,
             will use transmon.default_pulse. Default: None.
-        max_num_pulses (optional, tuple[float, float, int]): Maximum number of 
+        max_num_pulses (optional, tuple[float, float, int]): Maximum number of
             repeated pulses, Default: 100.
         progbar (optional, bool): Whether to display a tqdm progress bar.
             Default: True.
@@ -327,13 +327,13 @@ def tune_repeated_pio2_pulses(
         e_ops = [init_state]
     e_ops = ops2dms(e_ops)
     e_pop = []
-    num_pulses = np.arange(max_num_pulses+1)
+    num_pulses = np.arange(max_num_pulses + 1)
     current_state = init_state
 
     def run_sim(current_state, N):
         seq = get_sequence(system)
         for _ in range(N):
-            qubit.rotate_x(np.pi/2, pulse_name=pulse_name)
+            qubit.rotate_x(np.pi / 2, pulse_name=pulse_name)
         result = seq.run(current_state, e_ops=e_ops, only_final_state=False)
         current_state = result.states[-1]
         return result, current_state
@@ -351,7 +351,7 @@ def tune_repeated_pio2_pulses(
     display(fit_result)
     amp_scale = 0.5 / fit_result.params["f0"]
     amp_scale = amp_scale**-1
-    
+
     old_amp = pulse.amp
     new_amp = amp_scale * old_amp
 
@@ -392,6 +392,7 @@ def tune_repeated_pio2_pulses(
             verify=False,
         )
     return (fig, ax), old_amp, new_amp
+
 
 def tune_drag(
     system,
