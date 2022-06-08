@@ -89,20 +89,20 @@ def array_pulse(
 
 def gaussian_wave(sigma, chop=4):
     ts = np.linspace(-chop // 2 * sigma, chop // 2 * sigma, int(chop * sigma // 4) * 4)
-    P = np.exp(-(ts ** 2) / (2.0 * sigma ** 2))
+    P = np.exp(-(ts**2) / (2.0 * sigma**2))
     ofs = P[0]
     return (P - ofs) / (1 - ofs)
 
 
 def gaussian_deriv_wave(sigma, chop=4):
     ts = np.linspace(-chop // 2 * sigma, chop // 2 * sigma, int(chop * sigma // 4) * 4)
-    ofs = np.exp(-ts[0] ** 2 / (2 * sigma ** 2))
-    return (0.25 / sigma ** 2) * ts * np.exp(-(ts ** 2) / (2 * sigma ** 2)) / (1 - ofs)
+    ofs = np.exp(-ts[0] ** 2 / (2 * sigma**2))
+    return (0.25 / sigma**2) * ts * np.exp(-(ts**2) / (2 * sigma**2)) / (1 - ofs)
 
 
 def gaussian_chop(t, sigma, t0):
-    P = np.exp(-(t ** 2) / (2.0 * sigma ** 2))
-    ofs = np.exp(-(t0 ** 2) / (2.0 * sigma ** 2))
+    P = np.exp(-(t**2) / (2.0 * sigma**2))
+    ofs = np.exp(-(t0**2) / (2.0 * sigma**2))
     return (P - ofs) / (1 - ofs)
 
 
@@ -135,9 +135,9 @@ def ring_up_gaussian_flattop(length, sigma, ramp_offset=None):
         if np.abs(ts) < ramp_offset:
             return 1.0
         elif ts > ramp_offset:
-            return np.exp(-((ts - ramp_offset) ** 2) / (2.0 * sigma ** 2))
+            return np.exp(-((ts - ramp_offset) ** 2) / (2.0 * sigma**2))
         else:  # ts < ramp_offset
-            return np.exp(-((ts + ramp_offset) ** 2) / (2.0 * sigma ** 2))
+            return np.exp(-((ts + ramp_offset) ** 2) / (2.0 * sigma**2))
 
     ts = np.linspace(-length + 1, 0, length)
     P = np.array([_ring_up(t) for t in ts])

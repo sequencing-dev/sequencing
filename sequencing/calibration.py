@@ -44,8 +44,8 @@ def fit_sine(xs, ys):
 def fit_displacement(xs, ys):
     def displacement(xs, xscale=1.0, amp=1, ofs=0, n=0):
         alphas = xs * xscale
-        nbars = alphas ** 2
-        return ofs + amp * nbars ** n / factorial(int(n)) * np.exp(-nbars)
+        nbars = alphas**2
+        return ofs + amp * nbars**n / factorial(int(n)) * np.exp(-nbars)
 
     if xs[-1] > xs[0]:
         amp = ys[0] - ys[-1]
