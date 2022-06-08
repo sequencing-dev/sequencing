@@ -348,7 +348,7 @@ def tune_repeated_pio2_pulses(
     e_pop = np.array(e_pop)
 
     fit_result = fit_sine(num_pulses, e_pop)
-    display(fit_result)
+    print(fit_result)
     amp_scale = 0.5 / fit_result.params["f0"]
     amp_scale = amp_scale**-1
 
