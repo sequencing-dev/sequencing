@@ -31,10 +31,10 @@ def fit_sine(xs, ys):
     f0 = fs[ix]
     phi0 = 2 * np.pi * f0 * xs[0]
     phi = np.angle(fft[ix]) - phi0
-    phi = (phi + np.pi) % (2 * np.pi) - np.pi / 2
+    phi = np.angle(np.exp(1j*phi)) 
 
     model = lmfit.Model(sine)
-    model.set_param_hint("f0", value=f0, min=fs.min(), max=fs.max())
+    model.set_param_hint("f0", value=f0, min=fs.min(), max=2*fs.max())
     model.set_param_hint("ofs", value=ys.mean(), min=ys.min(), max=ys.max())
     model.set_param_hint("amp", value=np.ptp(ys) / 2, min=0, max=np.ptp(ys))
     model.set_param_hint("phi", value=phi, min=-2 * np.pi, max=2 * np.pi)
