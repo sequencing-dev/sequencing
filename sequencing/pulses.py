@@ -336,6 +336,17 @@ class Pulse(Parameterized):
             ax.legend(loc="best")
         return ax
 
+    def get_length(self, **kwargs):
+        """Returns Pulse's length in nanoseconds.
+
+        Keyword arguments are passed to either ``pulse_func`` or
+        ``array_pulse``, or used to override the pulse's parameters.
+
+        Returns:
+            ``float``: pulse length [ns]
+        """
+        return len(self(**kwargs))
+
 
 @attr.s
 class ConstantPulse(Pulse):
