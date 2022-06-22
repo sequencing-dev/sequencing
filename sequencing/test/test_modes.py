@@ -203,6 +203,10 @@ class TestTransmon(unittest.TestCase):
         q1.gaussian_pulse.sigma = 40
         system = System("system", modes=[q0, q1])
         init_state = system.fock()
+        dt = 0.5
+        system.dt = dt
+        self.assertEqual(q0.dt, dt)
+        self.assertEqual(q1.dt, dt)
 
         for qubit in [q0, q1]:
             for _ in range(1):
@@ -367,6 +371,10 @@ class TestCavity(unittest.TestCase):
         c0 = Cavity("c0", levels=10, kerr=-10e-6)
         c1 = Cavity("c1", levels=12, kerr=-10e-6)
         system = System("system", modes=[c0, c1])
+        dt = 2
+        system.dt = dt
+        self.assertEqual(c0.dt, dt)
+        self.assertEqual(c1.dt, dt)
         init_state = system.fock()
         for cavity in [c0, c1]:
             for _ in range(1):

@@ -120,8 +120,19 @@ class System(Parameterized):
         super().initialize()
         if self.order_modes:
             self.modes = sort_modes(self.modes)
+        self._dt = 1
         self.active_modes = self.modes
         self.coupling_terms = defaultdict(list)
+
+    @property
+    def dt(self):
+        return self._dt
+
+    @dt.setter
+    def dt(self, dt):
+        self._dt = dt
+        for mode in self.modes:
+            mode.dt = dt
 
     def __getattribute__(self, name):
         # Access modes like system.qubit.
