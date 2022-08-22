@@ -17,7 +17,7 @@ class TestRabi(unittest.TestCase):
         qubit = Transmon("qubit", levels=2)
         system = System("system", modes=[qubit])
         system.dt = 0.75
-        for _ in range(3):
+        for _ in range(5):
             _, old_amp, new_amp = tune_rabi(system, qubit.fock(0))
         self.assertLess(abs(old_amp - new_amp), 1e-7)
 
