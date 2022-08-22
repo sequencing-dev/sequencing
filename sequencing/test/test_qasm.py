@@ -16,7 +16,7 @@ class TestQasmSequence(unittest.TestCase):
 
         for qubit in [q0, q1]:
             init_state = system.fock()
-            for _ in range(1):
+            for _ in range(3):
                 _ = tune_rabi(
                     system, init_state=init_state, mode_name=qubit.name, verify=False
                 )
