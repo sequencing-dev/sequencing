@@ -10,6 +10,15 @@ Change Log
 View release history on `PyPI <https://pypi.org/project/sequencing/#history>`_
 or `GitHub <https://github.com/sequencing-dev/sequencing/releases>`_.
 
+Version 1.2.0
+-------------
+
+Release date: 2022-08-30.
+
+**New Features**
+    - Add support for time step ``dt != 1 ns`` (`#21 <https://github.com/sequencing-dev/sequencing/pull/21>`_).
+
+
 Version 1.1.4
 -------------
 
