@@ -19,7 +19,7 @@ class TestRabi(unittest.TestCase):
         system.dt = 0.75
         for _ in range(5):
             _, old_amp, new_amp = tune_rabi(system, qubit.fock(0))
-        self.assertLess(abs(old_amp - new_amp), 1e-7)
+        self.assertLess(abs(old_amp - new_amp), 1e-5)
 
         init = qubit.fock(0)
         seq = get_sequence(system)
