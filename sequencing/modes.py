@@ -607,6 +607,17 @@ class PulseMode(Mode):
         super().initialize()
         self.add_pulse(cls=SmoothedConstantPulse)
         self.add_pulse(cls=GaussianPulse)
+        self._dt = 1
+
+    @property
+    def dt(self):
+        return self._dt
+
+    @dt.setter
+    def dt(self, dt):
+        self._dt = dt
+        for pulse in self.pulses.values():
+            pulse.dt = dt
 
     def add_pulse(self, cls=GaussianPulse, name=None, error_if_exists=False, **kwargs):
         """Creates a new pulse of type ``cls`` and adds it to ``self.pulses``.
@@ -739,7 +750,7 @@ class Qubit(PulseMode):
             f"{self.name}.x": HTerm(self.x, c_wave.real),
             f"{self.name}.y": HTerm(self.y, c_wave.imag),
         }
-        return Operation(len(c_wave), terms)
+        return Operation(len(c_wave) * self.dt, terms)
 
     def rotate_x(self, angle, unitary=False, **kwargs):
         """Generate a rotation about the x axis.
@@ -883,4 +894,4 @@ class Cavity(PulseMode):
             f"{self.name}.x": HTerm(self.x, i),
             f"{self.name}.y": HTerm(self.y, q),
         }
-        return Operation(len(c_wave), terms)
+        return Operation(len(c_wave) * self.dt, terms)

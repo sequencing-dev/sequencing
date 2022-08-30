@@ -34,6 +34,7 @@ def array_pulse(
     amp=1,
     phase=0,
     detune=0,
+    dt=1.0,
     noise_sigma=0,
     noise_alpha=0,
     scale_noise=False,
@@ -47,9 +48,10 @@ def array_pulse(
             If None, the imaginary part is set to 0. Default: None.
         amp (float): Factor by which to scale the waveform amplitude.
             Default: 1.
-        phase (optionla, float): Phase offset in radians. Default: 0.
+        phase (optional, float): Phase offset in radians. Default: 0.
         detune (optional, float): Software detuning/time-dependent phase to
             apply to the waveform, in GHz. Default: 0.
+        dt (optional, float): Sample time in nanoseconds.
         noise_sigma (optional, float): Standard deviation of additive Gaussian
             noise applied to the pulse (see scale_noise).
             Default: 0.
@@ -68,7 +70,7 @@ def array_pulse(
     if q_wave is None:
         q_wave = np.zeros_like(i_wave)
     if detune:
-        ts = np.arange(len(i_wave))
+        ts = np.linspace(0, len(i_wave) * dt, len(i_wave))
         c_wave = (i_wave + 1j * q_wave) * np.exp(-2j * np.pi * ts * detune)
         i_wave, q_wave = c_wave.real, c_wave.imag
     if noise_sigma:
@@ -87,15 +89,17 @@ def array_pulse(
     return c_wave
 
 
-def gaussian_wave(sigma, chop=4):
-    ts = np.linspace(-chop // 2 * sigma, chop // 2 * sigma, int(chop * sigma // 4) * 4)
+def gaussian_wave(sigma, chop=4, dt=1):
+    length = chop * sigma
+    ts = np.linspace(-length / 2, length / 2, int(length / dt))
     P = np.exp(-(ts**2) / (2.0 * sigma**2))
     ofs = P[0]
     return (P - ofs) / (1 - ofs)
 
 
-def gaussian_deriv_wave(sigma, chop=4):
-    ts = np.linspace(-chop // 2 * sigma, chop // 2 * sigma, int(chop * sigma // 4) * 4)
+def gaussian_deriv_wave(sigma, chop=4, dt=1):
+    length = chop * sigma
+    ts = np.linspace(-length / 2, length / 2, int(length / dt))
     ofs = np.exp(-ts[0] ** 2 / (2 * sigma**2))
     return (0.25 / sigma**2) * ts * np.exp(-(ts**2) / (2 * sigma**2)) / (1 - ofs)
 
@@ -128,96 +132,98 @@ def ring_up_wave(length, reverse=False, shape="tanh", **kwargs):
     return wave
 
 
-def ring_up_gaussian_flattop(length, sigma, ramp_offset=None):
+def ring_up_gaussian_flattop(length, sigma, ramp_offset=None, dt=1):
     ramp_offset = 0 if ramp_offset is None else ramp_offset
 
-    def _ring_up(ts):
-        if np.abs(ts) < ramp_offset:
+    def _ring_up(t):
+        if np.abs(t) < ramp_offset:
             return 1.0
         elif ts > ramp_offset:
-            return np.exp(-((ts - ramp_offset) ** 2) / (2.0 * sigma**2))
-        else:  # ts < ramp_offset
-            return np.exp(-((ts + ramp_offset) ** 2) / (2.0 * sigma**2))
+            return np.exp(-((t - ramp_offset) ** 2) / (2.0 * sigma**2))
+        else:  # t < ramp_offset
+            return np.exp(-((t + ramp_offset) ** 2) / (2.0 * sigma**2))
 
-    ts = np.linspace(-length + 1, 0, length)
+    ts = np.linspace(-length + 1, 0, int(length / dt))
     P = np.array([_ring_up(t) for t in ts])
     # normalize so tail amp = 0 and max amp = 0
     ofs = P[0]
     return (P - ofs) / (1 - ofs)
 
 
-def ring_up_cos(length):
-    return 0.5 * (1 - np.cos(np.linspace(0, np.pi, length)))
+def ring_up_cos(length, dt=1):
+    return 0.5 * (1 - np.cos(np.linspace(0, np.pi, int(length / dt))))
 
 
-def ring_up_tanh(length):
-    ts = np.linspace(-2, 2, length)
+def ring_up_tanh(length, dt=1):
+    ts = np.linspace(-2, 2, int(length / dt))
     return (1 + np.tanh(ts)) / 2
 
 
 def smoothed_constant_wave(length, sigma, shape="tanh", **kwargs):
+    dt = kwargs.get("dt", 1)
     if sigma == 0:
-        return np.ones(length)
+        return np.ones(int(length / dt))
 
     return np.concatenate(
         [
             ring_up_wave(sigma, shape=shape, **kwargs),
-            np.ones(length - 2 * sigma),
+            np.ones(int((length - 2 * sigma) / dt)),
             ring_up_wave(sigma, reverse=True, shape=shape, **kwargs),
         ]
     )
 
 
-def constant_pulse(length=None):
+def constant_pulse(length=None, dt=1):
+    length = int(length / dt)
     i_wave, q_wave = np.ones(length), np.zeros(length)
     return i_wave, q_wave
 
 
-def gaussian_pulse(sigma=None, chop=4, drag=0):
-    i_wave = gaussian_wave(sigma, chop=chop)
-    q_wave = drag * gaussian_deriv_wave(sigma, chop=chop)
+def gaussian_pulse(sigma=None, chop=4, drag=0, dt=1):
+    i_wave = gaussian_wave(sigma, chop=chop, dt=dt)
+    q_wave = drag * gaussian_deriv_wave(sigma, chop=chop, dt=dt)
     return i_wave, q_wave
 
 
-def smoothed_constant_pulse(length=None, sigma=None, shape="tanh"):
-    i_wave = smoothed_constant_wave(length, sigma, shape=shape)
+def smoothed_constant_pulse(length=None, sigma=None, shape="tanh", dt=1):
+    i_wave = smoothed_constant_wave(length, sigma, shape=shape, dt=dt)
     q_wave = np.zeros_like(i_wave)
     return i_wave, q_wave
 
 
-def sech_wave(sigma, chop=4):
+def sech_wave(sigma, chop=4, dt=1):
     # https://arxiv.org/pdf/1704.00803.pdf
     # https://doi.org/10.1103/PhysRevA.96.042339
     rho = np.pi / (2 * sigma)
     t0 = chop * sigma // 2
-    ts = np.linspace(-t0, t0, int(chop * sigma // 4) * 4)
+    ts = np.linspace(-t0, t0, int(chop * sigma / dt))
     P = 1 / np.cosh(rho * ts)
     ofs = P[0]
     return (P - ofs) / (1 - ofs)
 
 
-def sech_deriv_wave(sigma, chop=4):
+def sech_deriv_wave(sigma, chop=4, dt=1):
     rho = np.pi / (2 * sigma)
     t0 = chop * sigma // 2
-    ts = np.linspace(-t0, t0, int(chop * sigma // 4) * 4)
+    ts = np.linspace(-t0, t0, int(chop * sigma / dt))
     ofs = 1 / np.cosh(rho * ts[0])
     P = -np.sinh(rho * ts) / np.cosh(rho * ts) ** 2
     return (P - ofs) / (1 - ofs)
 
 
-def sech_pulse(sigma=None, chop=4, drag=0):
-    i_wave = sech_wave(sigma, chop=chop)
+def sech_pulse(sigma=None, chop=4, drag=0, dt=1):
+    i_wave = sech_wave(sigma, chop=chop, dt=dt)
     # q_wave = drag * sech_deriv_wave(sigma, chop=chop)
-    q_wave = drag * np.gradient(i_wave)
+    q_wave = drag * np.gradient(i_wave) / dt
     return i_wave, q_wave
 
 
-def slepian_pulse(tau=None, width=10, drag=0):
+def slepian_pulse(tau=None, width=10, drag=0, dt=1):
     # bandwidth is relative, i.e. scaled by 1/tau
     from scipy.signal.windows import slepian
 
-    i_wave = slepian(tau, width / tau)
-    q_wave = drag * np.gradient(i_wave)
+    i_wave = slepian(tau, width / tau / dt)
+    q_wave = drag * np.gradient(i_wave) / dt
     return i_wave, q_wave
 
 
@@ -248,6 +254,7 @@ class Pulse(Parameterized):
     amp = FloatParameter(1)
     detune = GigahertzParameter(0)
     phase = RadianParameter(0)
+    dt = NanosecondParameter(1)
     noise_sigma = FloatParameter(0)
     noise_alpha = FloatParameter(0)
     scale_noise = BoolParameter(False)
@@ -295,8 +302,10 @@ class Pulse(Parameterized):
         if ax is None:
             _, ax = plt.subplots()
         c_wave = self(**kwargs)
-        (line,) = ax.plot(c_wave.real, ls="-", label=self.name)
-        ax.plot(c_wave.imag, color=line._color, ls="--")
+        dt = kwargs.get("dt", self.dt)
+        ts = np.linspace(0, len(c_wave) * dt, len(c_wave))
+        (line,) = ax.plot(ts, c_wave.real, ls="-", label=self.name)
+        ax.plot(ts, c_wave.imag, color=line._color, ls="--")
         ax.grid(grid)
         if legend:
             ax.legend(loc="best")

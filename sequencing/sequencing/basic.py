@@ -24,7 +24,7 @@ class HamiltonianChannels(object):
             collapse operators instead of Hamiltonian terms. Default: None.
     """
 
-    def __init__(self, channels=None, collapse_channels=None, t0=0):
+    def __init__(self, channels=None, collapse_channels=None, t0=0, dt=1):
         self.channels = {}
         if channels is None:
             channels = {}
@@ -41,7 +41,7 @@ class HamiltonianChannels(object):
             self.add_channel(name, C_op=op, time_dependent=time_dependent)
         self.tmin = t0
         self.tmax = t0
-        self.dt = 1
+        self.dt = dt
 
     @property
     def times(self):
@@ -322,8 +322,12 @@ class CompiledPulseSequence(object):
     def set_system(self, system, channels=None, t0=0):
         self.system = system
         self.modes = system.modes
-        self.hc = HamiltonianChannels(channels=channels, t0=t0)
+        self.hc = HamiltonianChannels(channels=channels, t0=t0, dt=system.dt)
         self._t = self.hc.tmax
+
+    @property
+    def dt(self):
+        return self.hc.dt
 
     @property
     def times(self):
