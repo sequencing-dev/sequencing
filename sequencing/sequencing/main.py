@@ -412,23 +412,7 @@ class Sequence(ValidatedList):
                 times.append(times[-1])
         return props
 
-    def plot_coefficients(self, subplots=True, sharex=True, sharey=True):
-        """Plot the Hamiltionian coefficients for all channels.
-        Unitaries are represented by vertical lines.
-
-        Args:
-            subplots (optional, bool): If True, plot each channel
-                on a different axis. Default: True.
-            sharex (optional, bool): Share x axes if subplots is True.
-                Default: True.
-            sharey (optional, bool): Share y axes if subplots is True.
-                Default: True.
-
-        Returns:
-            tuple: (fig, ax): matplotlib Figure and axes.
-        """
-        import matplotlib.pyplot as plt
-
+    def get_coefficients(self):
         self._t = 0
         channels = {}
         for item in self:
@@ -469,6 +453,26 @@ class Sequence(ValidatedList):
                 else:
                     channels[name] = (new_times, info["coeffs"])
         channel_names = [n for n in channels if n not in ["delay", "unitary"]]
+        return channel_names, channels
+
+    def plot_coefficients(self, subplots=True, sharex=True, sharey=True):
+        """Plot the Hamiltionian coefficients for all channels.
+        Unitaries are represented by vertical lines.
+
+        Args:
+            subplots (optional, bool): If True, plot each channel
+                on a different axis. Default: True.
+            sharex (optional, bool): Share x axes if subplots is True.
+                Default: True.
+            sharey (optional, bool): Share y axes if subplots is True.
+                Default: True.
+
+        Returns:
+            tuple: (fig, ax): matplotlib Figure and axes.
+        """
+        import matplotlib.pyplot as plt
+
+        channel_names, channels = self.get_coefficients()
         if not channel_names:
             raise ValueError("There are no channels with coefficients to plot.")
         if subplots:
